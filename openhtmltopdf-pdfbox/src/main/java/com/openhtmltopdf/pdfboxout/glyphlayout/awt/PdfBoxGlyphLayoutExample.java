@@ -22,15 +22,22 @@ import java.util.Objects;
  */
 public class PdfBoxGlyphLayoutExample {
     public static void main(String[] args) throws Exception {
-        new PdfBoxGlyphLayoutExample().run();
+        new PdfBoxGlyphLayoutExample().run(false, "");
+        new PdfBoxGlyphLayoutExample().run(true, "_ActualText");
     }
 
-    public void run() throws IOException, FontFormatException {
-        File out = new File("GlyphLayoutHtmlExample.pdf");
+    public void run(boolean useActualText, String sActualText) throws IOException, FontFormatException {
+        File out = new File(String.format("GlyphLayoutHtmlExample%s.pdf", sActualText);
 
         try (PDDocument doc = new PDDocument()) {
             GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
-
+            if (useActualText) {
+                AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options = new AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions();
+                if (useActualText) {
+                    options.useActualText();
+                }
+                GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt(options);
+            }
             PDFont arimo = glyphLayoutProcessor.loadFont(doc, this.getClass().getResourceAsStream("/fonts/arimo/Arimo-Regular.ttf"));
 
             PdfRendererBuilder builder = new PdfRendererBuilder();
