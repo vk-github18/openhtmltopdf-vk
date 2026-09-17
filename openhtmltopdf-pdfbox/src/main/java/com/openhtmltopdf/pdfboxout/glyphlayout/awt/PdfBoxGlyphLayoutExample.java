@@ -2,6 +2,7 @@ package com.openhtmltopdf.pdfboxout.glyphlayout.awt;
 
 import com.openhtmltopdf.pdfboxout.PDFontSupplier;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import org.apache.pdfbox.pdmodel.AbstractGlyphLayoutProcessor;
 import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -27,16 +28,14 @@ public class PdfBoxGlyphLayoutExample {
     }
 
     public void run(boolean useActualText, String sActualText) throws IOException, FontFormatException {
-        File out = new File(String.format("GlyphLayoutHtmlExample%s.pdf", sActualText);
+        File out = new File(String.format("GlyphLayoutHtmlExample%s.pdf", sActualText));
 
         try (PDDocument doc = new PDDocument()) {
             GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
             if (useActualText) {
                 AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options = new AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions();
-                if (useActualText) {
-                    options.useActualText();
-                }
-                GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt(options);
+                options.useActualText();
+                glyphLayoutProcessor = new GlyphLayoutProcessorAwt(options);
             }
             PDFont arimo = glyphLayoutProcessor.loadFont(doc, this.getClass().getResourceAsStream("/fonts/arimo/Arimo-Regular.ttf"));
 
