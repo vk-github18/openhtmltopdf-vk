@@ -23,12 +23,17 @@ import java.util.Objects;
  */
 public class PdfBoxGlyphLayoutExample {
     public static void main(String[] args) throws Exception {
-        new PdfBoxGlyphLayoutExample().run(false, "");
-        new PdfBoxGlyphLayoutExample().run(true, "_ActualText");
+        new PdfBoxGlyphLayoutExample().run(false, "", false, PdfRendererBuilder.PdfAConformance.NONE);
+        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", false, PdfRendererBuilder.PdfAConformance.NONE);
+        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_A);
+        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_B);
+        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_U);
+        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_3_B);
+        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_3_U);
     }
 
-    public void run(boolean useActualText, String sActualText) throws IOException, FontFormatException {
-        File out = new File(String.format("GlyphLayoutHtmlExample%s.pdf", sActualText));
+    public void run(boolean useActualText, String sActualText, boolean accessible, PdfRendererBuilder.PdfAConformance pdfAConformance) throws IOException, FontFormatException {
+        File out = new File(String.format("GlyphLayoutHtmlExample%s_%s.pdf", sActualText, pdfAConformance.toString()));
 
         try (PDDocument doc = new PDDocument()) {
             GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
@@ -49,6 +54,9 @@ public class PdfBoxGlyphLayoutExample {
 
             String html = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
 
+            builder.usePdfUaAccessibility(accessible);
+            builder.usePdfAConformance(pdfAConformance);
+            // Remember to add one or more f
             builder.withProducer("openhtmltopdf-pdfbox-glyphlayout-example");
             builder.toStream(new FileOutputStream(out));
             builder.usePDDocument(doc);
