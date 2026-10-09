@@ -795,7 +795,7 @@ public class PdfBoxAccessibilityHelper {
 
         @Override
         String getPdfTag() {
-            return StandardStructureTypes.Figure;
+            return StandardStructureTypes.FIGURE;
         }
 
         @Override
@@ -1468,7 +1468,7 @@ public class PdfBoxAccessibilityHelper {
                         if (type == StructureType.REPLACED) {
                             // Use FigureStructualElement to preserve alt text and BBox.
                             current = createRunningLinkFigureItem(box);
-                            tag = StandardStructureTypes.Figure;
+                            tag = StandardStructureTypes.FIGURE;
                         } else {
                             current = createRunningLinkContentItem();
                             tag = StandardStructureTypes.SPAN;
@@ -1545,7 +1545,7 @@ public class PdfBoxAccessibilityHelper {
                 FigureContentItem current = createFigureContentStructureItem(type, box);
 
                 if (current != null) {
-                    _cs.beginMarkedContent(COSName.getPDFName(StandardStructureTypes.Figure), current.dict);
+                    _cs.beginMarkedContent(COSName.getPDFName(StandardStructureTypes.FIGURE), current.dict);
                     return TRUE_TOKEN;
                 } else {
                     // For images that continue over more than one page, just mark the portion on the second
