@@ -56,7 +56,6 @@ public class PdfBoxGlyphLayoutExample {
 
             builder.usePdfUaAccessibility(accessible);
             builder.usePdfAConformance(pdfAConformance);
-            // Remember to add one or more f
             builder.withProducer("openhtmltopdf-pdfbox-glyphlayout-example");
             builder.toStream(new FileOutputStream(out));
             builder.usePDDocument(doc);
