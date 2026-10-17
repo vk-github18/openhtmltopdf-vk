@@ -53,6 +53,27 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- Optional profile to enable PDFBox glyph-layout support and build the glyph-layout examples.
+             Activating this profile sets pdfbox.version to 3.0.9 (which provides the GlyphLayoutProcessor API)
+             and pulls in the pdfbox-layout-awt artifact. This profile is opt-in for reviewers/builders who
+             want to reproduce the DIN-91379 example PDFs. Do not activate by default. -->
+        <profile>
+            <id>glyphlayout</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <pdfbox.version>3.0.9</pdfbox.version>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.pdfbox</groupId>
+                    <artifactId>pdfbox-layout-awt</artifactId>
+                    <version>${pdfbox.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
     <dependencies>
