@@ -31,4 +31,9 @@ public class PdfRendererBuilderState extends BaseRendererBuilder.BaseRendererBui
 	public byte[] _colorProfile;
 	public PageSupplier _pageSupplier;
 	public NamespaceHandler _namespaceHandler;
+	/**
+	 * Arbitrary glyph layout processor object (from PDFBox) set by the builder.
+	 * Kept as Object to avoid a compile-time dependency on PDFBox's glyph-layout API.
+	 */
+	public Object _glyphLayoutProcessor;
 }

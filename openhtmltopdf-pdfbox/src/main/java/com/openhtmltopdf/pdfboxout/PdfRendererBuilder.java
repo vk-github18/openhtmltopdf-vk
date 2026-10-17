@@ -170,6 +170,23 @@ public class PdfRendererBuilder extends BaseRendererBuilder<PdfRendererBuilder, 
     }
 
     /**
+     * Supply a PDFBox glyph layout processor to be used when rendering text.
+     *
+     * <p>When present, the renderer configures each generated PDPageContentStream with this
+     * processor before drawing text. This enables more accurate glyph positioning for sequences
+     * such as DIN 91379 combining marks.</p>
+     *
+     * Note: This overload accepts an arbitrary Object to avoid a compile-time dependency
+     * on PDFBox glyph-layout APIs. Prefer passing an instance of
+     * org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface when using PDFBox 3.0.9+
+     * and activating the glyphlayout Maven profile.
+     */
+    public PdfRendererBuilder useGlyphLayoutProcessor(Object glyphLayoutProcessor) {
+        state._glyphLayoutProcessor = glyphLayoutProcessor;
+        return this;
+    }
+
+    /**
      * Set the PDF version, typically we use 1.7. If you set a lower version, it is
      * your responsibility to make sure no more recent PDF features are used.
      */
@@ -271,13 +288,13 @@ public class PdfRendererBuilder extends BaseRendererBuilder<PdfRendererBuilder, 
     }
 
     /**
-	  * Provide a custom auto-hyphenator, that will be used, if the 'hyphens' is being used in css
-	  * @param hyphenator custom hyphenator, that should be used
-	  */
-	  public PdfRendererBuilder useHyphenation(Hyphenator hyphenator) {
-		  state._hyphenator = hyphenator;
-		  return this;
-	  }
+      * Provide a custom auto-hyphenator, that will be used, if the 'hyphens' is being used in css
+      * @param hyphenator custom hyphenator, that should be used
+      */
+      public PdfRendererBuilder useHyphenation(Hyphenator hyphenator) {
+          state._hyphenator = hyphenator;
+          return this;
+      }
 
     /**
      * List of caches available.
@@ -359,4 +376,3 @@ public class PdfRendererBuilder extends BaseRendererBuilder<PdfRendererBuilder, 
         }
     }
 }
-
