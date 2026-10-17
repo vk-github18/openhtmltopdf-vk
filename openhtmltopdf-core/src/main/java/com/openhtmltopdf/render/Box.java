@@ -582,6 +582,10 @@ public abstract class Box implements Styleable, DisplayListItem {
         c.getOutputDevice().paintBorder(c, this);
     }
 
+    public void paintBoxShadow(RenderingContext c) {
+        c.getOutputDevice().paintBoxShadow(c, this);
+    }
+
     private boolean isPaintsRootElementBackground() {
         return (isRoot() && getStyle().isHasBackground()) ||
                 (isBody() && ! getParent().getStyle().isHasBackground());
@@ -901,9 +905,9 @@ public abstract class Box implements Styleable, DisplayListItem {
             return false;
         } else {
             if (c.isInFloatBottom()) {
-                return getAbsY() + getHeight() >= pageBox.getBottom();
+                return getAbsY() + getHeight() > pageBox.getBottom();
             } else {
-                return getAbsY() + getHeight() >= pageBox.getBottom(c) - c.getExtraSpaceBottom();
+                return getAbsY() + getHeight() > pageBox.getBottom(c) - c.getExtraSpaceBottom();
             }
         }
     }

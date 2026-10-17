@@ -747,6 +747,16 @@ public class VisualRegressionTest {
     public void testIssue417ReplacedSizingWidthHeightWithMax() throws IOException {
         assertTrue(vt.runTest("issue-417-replaced-sizing-width-height-with-max"));
     }
+
+    /**
+     * Tests that an explicit width/height below max-width/max-height is kept
+     * when the image's intrinsic size exceeds the max.
+     * https://github.com/openhtmltopdf/openhtmltopdf/issues/74
+     */
+    @Test
+    public void testIssue74ReplacedWidthBelowMax() throws IOException {
+        assertTrue(vt.runTest("issue-74-replaced-width-below-max"));
+    }
     
     /**
      * Tests that a fixed position element correctly resizes to the sum of its child boxes
@@ -847,6 +857,16 @@ public class VisualRegressionTest {
     @Test
     public void testReplacedSizingSvg() throws IOException {
         assertTrue(vt.runTest("replaced-sizing-svg", TestSupport.WITH_SVG));
+    }
+
+    /**
+     * Tests that SVG strokes under a non-uniform scale or a skew are scaled per
+     * direction, rather than by the horizontal factor alone.
+     * https://github.com/openhtmltopdf/openhtmltopdf/issues/126
+     */
+    @Test
+    public void testIssue126SvgNonUniformStroke() throws IOException {
+        assertTrue(vt.runTest("issue-126-svg-non-uniform-stroke", TestSupport.WITH_SVG));
     }
     
     /**
@@ -1082,6 +1102,16 @@ public class VisualRegressionTest {
     @Test
     public void testBorderRadius() throws IOException {
         assertTrue(vt.runTest("border-radius"));
+    }
+
+    /**
+     * Tests outer box-shadows: offsets, spread, border-radius, multiple shadows,
+     * alpha color, and a positioned box painted in its own layer. Inset shadows
+     * are not painted.
+     */
+    @Test
+    public void testBoxShadow() throws IOException {
+        assertTrue(vt.runTest("box-shadow"));
     }
 
     /**
@@ -1899,6 +1929,38 @@ public class VisualRegressionTest {
         assertTrue(vt.runTest("block-straddle-pushed-first-line", TestSupport.WITH_FONT));
     }
 
+    /**
+     * Tests pagination of a list with floated li::before bullets after a heading with
+     * page-break-after: avoid: the heading only keeps with the list's first line, a
+     * bullet moves with its pushed paragraph, and widows: 2 splits a paragraph 2 + 2.
+     * https://github.com/openhtmltopdf/openhtmltopdf/issues/103
+     */
+    @Test
+    public void testIssue103ListFloatBulletPagination() throws IOException {
+        assertTrue(vt.runTest("issue-103-list-float-bullet-pagination", TestSupport.WITH_FONT));
+    }
+
+    /**
+     * Tests that content ending exactly at the bottom of a page stays on that page,
+     * for a plain paragraph, a page-break-inside: avoid block, and a heading kept
+     * with the first line of a list. Two further cases record where pagination
+     * still differs from Chrome (see the comments in the fixture).
+     */
+    @Test
+    public void testExactFitPageBottom() throws IOException {
+        assertTrue(vt.runTest("exact-fit-page-bottom", TestSupport.WITH_FONT));
+    }
+
+    /**
+     * A box at the top of a page keeps its top margin inside a table cell or an
+     * overflow: hidden box, as that margin does not adjoin the break before them.
+     * Only a margin that collapses through to the break is truncated.
+     */
+    @Test
+    public void testTopMarginInsideBfcAtPageTop() throws IOException {
+        assertTrue(vt.runTest("top-margin-inside-bfc-at-page-top", TestSupport.WITH_FONT));
+    }
+
     @Test
     public void testFsTablePaginateMiddleSpace() throws IOException {
         assertTrue(vt.runTest("fs-table-paginate-middle-space", TestSupport.WITH_FONT));
@@ -2048,6 +2110,44 @@ public class VisualRegressionTest {
     @Test
     public void testInvoiceMultiPageFlush() throws IOException {
         assertTrue(vt.runTest("invoice-multi-page-flush", TestSupport.WITH_FONT));
+    }
+
+    /**
+     * Tests that a line does not break where no break opportunity exists between
+     * the end of one inline element's text and the start of the next, such as
+     * between an opening parenthesis and a link, and that a slash or straight
+     * quote between digits does not allow a break.
+     * https://github.com/openhtmltopdf/openhtmltopdf/issues/122
+     */
+    @Test
+    public void testIssue122LineBreakAcrossInlines() throws IOException {
+        assertTrue(vt.runTest("issue-122-line-break-across-inlines", TestSupport.WITH_FONT));
+    }
+
+    /**
+     * Tests that the margin, border and padding of elements starting after a
+     * position without a break opportunity, and hyphenation points in the
+     * following text, are taken into account when deciding where to break.
+     * https://github.com/openhtmltopdf/openhtmltopdf/issues/122
+     */
+    @Test
+    public void testIssue122LineBreakGluePaddingHyphens() throws IOException {
+        assertTrue(vt.runTest("issue-122-line-break-glue-padding-hyphens", builder -> {
+            // Not TestSupport.WITH_FONT: its SimpleTextBreaker ignores soft hyphens.
+            builder.useFont(new File("target/test/visual-tests/Karla-Bold.ttf"), "TestFont");
+            builder.useHyphenation(text -> text.replace("hyphenation", "hy\u00ADphen\u00ADation"));
+        }));
+    }
+
+    /**
+     * Tests that ::before and ::after content of an inline element is laid out
+     * inside the element, so the element's border, background and text decoration
+     * enclose it, also for content resolved at paint time such as counter(page).
+     * https://github.com/openhtmltopdf/openhtmltopdf/issues/62
+     */
+    @Test
+    public void testIssue62GeneratedContentInsideInline() throws IOException {
+        assertTrue(vt.runTest("issue-62-generated-content-inside-inline", TestSupport.WITH_FONT));
     }
 
     // TODO:
