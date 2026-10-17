@@ -23,17 +23,19 @@ import java.util.Objects;
  */
 public class PdfBoxGlyphLayoutExample {
     public static void main(String[] args) throws Exception {
-        new PdfBoxGlyphLayoutExample().run(false, "", false, PdfRendererBuilder.PdfAConformance.NONE);
-        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", false, PdfRendererBuilder.PdfAConformance.NONE);
-        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_A);
-        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_B);
-        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_U);
-        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_3_B);
-        new PdfBoxGlyphLayoutExample().run(true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_3_U);
+        new PdfBoxGlyphLayoutExample().run(false, false, "", false, PdfRendererBuilder.PdfAConformance.NONE);
+        new PdfBoxGlyphLayoutExample().run(true, false, "", false, PdfRendererBuilder.PdfAConformance.NONE);
+        new PdfBoxGlyphLayoutExample().run(true, true, "_ActualText", false, PdfRendererBuilder.PdfAConformance.NONE);
+        new PdfBoxGlyphLayoutExample().run(true, true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_A);
+        new PdfBoxGlyphLayoutExample().run( true, true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_B);
+        new PdfBoxGlyphLayoutExample().run( true, true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_2_U);
+        new PdfBoxGlyphLayoutExample().run( true, true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_3_B);
+        new PdfBoxGlyphLayoutExample().run( true, true, "_ActualText", true, PdfRendererBuilder.PdfAConformance.PDFA_3_U);
     }
 
-    public void run(boolean useActualText, String sActualText, boolean accessible, PdfRendererBuilder.PdfAConformance pdfAConformance) throws IOException, FontFormatException {
-        File out = new File(String.format("GlyphLayoutHtmlExample%s_%s.pdf", sActualText, pdfAConformance.toString()));
+    public void run(boolean useGlyphLayoutProcessor, boolean useActualText, String sActualText, boolean accessible, PdfRendererBuilder.PdfAConformance pdfAConformance) throws IOException, FontFormatException {
+        String sGlyphLayout = useGlyphLayoutProcessor ? "_GlyphLayout" : "_NO_GlyphLayout";
+        File out = new File(String.format("GlyphLayoutHtmlExample_%s_%s_%s.pdf", sGlyphLayout, sActualText, pdfAConformance.toString()));
 
         try (PDDocument doc = new PDDocument()) {
             GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
@@ -45,11 +47,16 @@ public class PdfBoxGlyphLayoutExample {
             PDFont arimo = glyphLayoutProcessor.loadFont(doc, this.getClass().getResourceAsStream("/fonts/arimo/Arimo-Regular.ttf"));
 
             PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.useGlyphLayoutProcessor(glyphLayoutProcessor);
+            if (useGlyphLayoutProcessor) {
+                builder.useGlyphLayoutProcessor(glyphLayoutProcessor);
+            }
 
             // Load example HTML from resources
-            InputStream is = PdfBoxGlyphLayoutExample.class.getResourceAsStream("/glyphlayout/GlyphLayoutExample.html");
-            Objects.requireNonNull(is, "Could not find GlyphLayoutExample.html resource");
+            InputStream is = useGlyphLayoutProcessor ?
+                      PdfBoxGlyphLayoutExample.class.getResourceAsStream("/glyphlayout/GlyphLayoutExample.html")
+                    : PdfBoxGlyphLayoutExample.class.getResourceAsStream("/glyphlayout/NoGlyphLayoutExample.html");
+
+            Objects.requireNonNull(is, "Could not find Html resource");
 
 
             String html = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
