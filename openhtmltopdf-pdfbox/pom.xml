@@ -93,6 +93,12 @@
             <artifactId>xmpbox</artifactId>
             <version>${pdfbox.version}</version>
         </dependency>
+        <!-- Ensure pdfbox-layout-awt is available by default as requested -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox-layout-awt</artifactId>
+            <version>${pdfbox.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.github.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-core</artifactId>
@@ -159,7 +165,7 @@
     </build>
 
     <properties>
-        <pdfbox.version>3.0.7</pdfbox.version>
+        <pdfbox.version>3.0.9</pdfbox.version>
     </properties>
 
 </project>
