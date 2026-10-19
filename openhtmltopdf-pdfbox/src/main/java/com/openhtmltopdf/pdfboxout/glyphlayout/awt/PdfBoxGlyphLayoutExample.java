@@ -23,15 +23,31 @@ import java.util.Objects;
  */
 public class PdfBoxGlyphLayoutExample {
     public static void main(String[] args) throws Exception {
-        new PdfBoxGlyphLayoutExample().run("/glyphlayout/NoGlyphLayoutExampleDin91379.html", false, false, false, PdfRendererBuilder.PdfAConformance.NONE);
-        new PdfBoxGlyphLayoutExample().run("/glyphlayout/GlyphLayoutExampleDin91379.html", true, false, false, PdfRendererBuilder.PdfAConformance.NONE);
-        new PdfBoxGlyphLayoutExample().run("/glyphlayout/GlyphLayoutExampleDin91379.html", true, true, false, PdfRendererBuilder.PdfAConformance.NONE);
-        new PdfBoxGlyphLayoutExample().run("/glyphlayout/GlyphLayoutExampleDin91379.html", true, true, true, PdfRendererBuilder.PdfAConformance.PDFA_2_A);
-        new PdfBoxGlyphLayoutExample().run("/glyphlayout/GlyphLayoutExampleDin91379.html",  true, true, true, PdfRendererBuilder.PdfAConformance.PDFA_2_B);
-        new PdfBoxGlyphLayoutExample().run( "/glyphlayout/GlyphLayoutExampleDin91379.html", true, true, true, PdfRendererBuilder.PdfAConformance.PDFA_2_U);
-        new PdfBoxGlyphLayoutExample().run("/glyphlayout/GlyphLayoutExampleDin91379.html",  true, true, true, PdfRendererBuilder.PdfAConformance.PDFA_3_B);
-        new PdfBoxGlyphLayoutExample().run("/glyphlayout/GlyphLayoutExampleDin91379.html",  true, true, true, PdfRendererBuilder.PdfAConformance.PDFA_3_U);
-        new PdfBoxGlyphLayoutExample().run("/glyphlayout/GlyphLayoutExampleBidi.html",  true, true, true, PdfRendererBuilder.PdfAConformance.PDFA_3_U);
+        String[] exampleHtmlPathArray = new String[]{
+//                "/glyphlayout/NoGlyphLayoutExampleDin91379.html",
+                "/glyphlayout/GlyphLayoutExampleBidi.html"};
+        boolean[] useGlyphLayoutProcessorArray = new boolean[] {false, true};
+        boolean[] useActualTextArray = new boolean[] {false, true};
+        boolean[] accessibleArray = new boolean[] {false, true};
+        PdfRendererBuilder.PdfAConformance[] pdfAConformanceArray = new PdfRendererBuilder.PdfAConformance[]
+                {PdfRendererBuilder.PdfAConformance.NONE, PdfRendererBuilder.PdfAConformance.PDFA_2_A, PdfRendererBuilder.PdfAConformance.PDFA_2_B, PdfRendererBuilder.PdfAConformance.PDFA_2_U,
+                        PdfRendererBuilder.PdfAConformance.PDFA_3_B, PdfRendererBuilder.PdfAConformance.PDFA_3_U};
+
+        for (String exampleHtmlPath: exampleHtmlPathArray) {
+            for (boolean useGlyphLayoutProcessor: useGlyphLayoutProcessorArray) {
+                for (boolean useActualText: useActualTextArray) {
+                    for (boolean accessible: accessibleArray) {
+                        for (PdfRendererBuilder.PdfAConformance pdfAConformance: pdfAConformanceArray) {
+                            new PdfBoxGlyphLayoutExample().run(exampleHtmlPath, useGlyphLayoutProcessor, useActualText, accessible, pdfAConformance);
+                            if (!accessible) {
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
     public void run(String exampleHtmlPath, boolean useGlyphLayoutProcessor, boolean useActualText, boolean accessible, PdfRendererBuilder.PdfAConformance pdfAConformance) throws IOException, FontFormatException {
