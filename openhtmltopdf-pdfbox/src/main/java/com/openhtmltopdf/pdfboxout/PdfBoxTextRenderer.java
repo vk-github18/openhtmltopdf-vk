@@ -383,6 +383,7 @@ public class PdfBoxTextRenderer implements TextRenderer {
         float result = 0f;
         try {
             result = description.get().getFont().getStringWidth(effectiveString) / 1000f * pdfBoxFont.getSize2D();
+            // TODO call glyphLayoutManager.getWidth, if glyphLayoutManager is set
         } catch (IllegalArgumentException e) {
             /* PDFont::getStringWidth throws an IllegalArgumentException if the character doesn't exist in the font.
                We can do it one character by character instead, but first let's partition the string logarithmically
