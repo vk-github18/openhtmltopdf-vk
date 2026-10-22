@@ -527,6 +527,11 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
             // because Tw param does not work for UNICODE fonts
             Object[] array = makeJustificationArray(s, info);
             _cp.drawStringWithPositioning(array);
+
+            // TODO Split array into positioning and strings
+            // loop over split parts:
+            //     newLineAtOffset(x,0) when positioning
+            //     drawString otherwise
         } else {
             _cp.drawString(s);
         }
