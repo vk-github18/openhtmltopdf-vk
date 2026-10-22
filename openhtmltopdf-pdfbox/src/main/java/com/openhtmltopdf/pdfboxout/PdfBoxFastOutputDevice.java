@@ -528,9 +528,10 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
             Object[] array = makeJustificationArray(s, info);
             _cp.drawStringWithPositioning(array);
 
+            // If used for letter spacing: leave it as is. otherwise:
             // TODO Split array into positioning and strings
             // loop over split parts:
-            //     newLineAtOffset(x,0) when positioning
+            //     drawStringWithPositioning([dx1, dx2, ...]) only positioning, no text
             //     drawString otherwise
         } else {
             _cp.drawString(s);
