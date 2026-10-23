@@ -26,6 +26,7 @@
     <module>openhtmltopdf-slf4j</module>
     <module>openhtmltopdf-examples</module>
     <module>openhtmltopdf-pdfbox</module>
+    <module>openhtmltopdf-pdfbox-glyphlayout</module>
     <module>openhtmltopdf-rtl-support</module>
     <module>openhtmltopdf-svg-support</module>
     <module>openhtmltopdf-java2d</module>
