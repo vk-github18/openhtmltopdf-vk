@@ -24,7 +24,7 @@ import java.util.Objects;
 public class PdfBoxGlyphLayoutExample {
     public static void main(String[] args) throws Exception {
         String[] exampleHtmlPathArray = new String[]{
-//                "/glyphlayout/NoGlyphLayoutExampleDin91379.html",
+                "/glyphlayout/NoGlyphLayoutExampleDin91379.html",
                 "/glyphlayout/GlyphLayoutExampleBidi.html"};
         boolean[] useGlyphLayoutProcessorArray = new boolean[] {false, true};
         boolean[] useActualTextArray = new boolean[] {false, true};
