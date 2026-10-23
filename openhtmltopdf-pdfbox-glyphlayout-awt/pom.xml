@@ -15,12 +15,14 @@
 
     <name>Openhtmltopdf PDFBox GlayphLayoutAwt</name>
     <description>Openhtmltopdf is a CSS 2.1 renderer written in Java.
-        This artifact supports glyph layout for DIN 91379 and complex scripts.</description>
+        This artifact supports glyph layout for DIN 91379 and complex scripts
+        using PDFBox GlyphLayoutProcessorAwt.
+    </description>
 
     <licenses>
         <license>
             <name>GNU Lesser General Public License (LGPL), version 2.1 or later</name>
-            <url>http://www.gnu.org/licenses/lgpl.html</url>
+            <url>https://www.gnu.org/licenses/lgpl.html</url>
         </license>
     </licenses>
 
@@ -54,22 +56,15 @@
     </profiles>
 
     <dependencies>
-        <dependency>
+        <!--dependency>
             <groupId>io.github.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-core</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>io.github.openhtmltopdf</groupId>
             <artifactId>openhtmltopdf-pdfbox</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>io</artifactId>
-            <version>3.0.9-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>/home/volker/work/pdfbox-3.0/io/target/pdfbox-io-3.0.9-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>

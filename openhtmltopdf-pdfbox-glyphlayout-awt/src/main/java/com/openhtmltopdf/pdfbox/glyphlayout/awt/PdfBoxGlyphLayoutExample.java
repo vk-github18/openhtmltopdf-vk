@@ -4,17 +4,19 @@ import com.openhtmltopdf.pdfboxout.PDFontSupplier;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.apache.pdfbox.pdmodel.AbstractGlyphLayoutProcessor;
 import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
-import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-import java.awt.*;
+import java.awt.FontFormatException;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Example for PDFBox GlyphLayoutProcessor for correct glyph layout
@@ -76,7 +78,8 @@ public class PdfBoxGlyphLayoutExample {
             InputStream is = PdfBoxGlyphLayoutExample.class.getResourceAsStream(exampleHtmlPath);
             Objects.requireNonNull(is, "Could not find Html resource");
 
-            String html = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String html = br.lines().collect(Collectors.joining("\n"));
 
             builder.usePdfUaAccessibility(accessible);
             builder.usePdfAConformance(pdfAConformance);
