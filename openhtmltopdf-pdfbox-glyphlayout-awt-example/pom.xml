@@ -26,6 +26,25 @@
         </license>
     </licenses>
 
+    <properties>
+        <pdfbox.version>3.0.9</pdfbox.version>
+    </properties>
+
+    <!-- TODO delete this -->
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+
     <profiles>
         <profile>
             <id>release</id>
