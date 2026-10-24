@@ -374,7 +374,9 @@ public class PdfBoxTextRenderer implements TextRenderer {
      */
     private float getFontStringWidth(PDFont font, String text) throws IOException {
         float result;
-        if (_glyphLayoutProcessor != null && _glyphLayoutProcessor.supportsFont(font)) {
+        if (_glyphLayoutProcessor != null
+                && font instanceof PDType0Font
+                && _glyphLayoutProcessor.supportsFont(font)) {
             result = _glyphLayoutProcessor.getStringWidth((PDType0Font) font, 1f, text) * 1000f;
         } else {
             result = font.getStringWidth(text);
