@@ -9,7 +9,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>openhtmltopdf-pdfbox-glyphlayout-awt</artifactId>
+    <artifactId>openhtmltopdf-pdfbox-glyphlayout-awt-example</artifactId>
 
     <packaging>jar</packaging>
 
@@ -68,7 +68,21 @@
             <scope>system</scope>
             <systemPath>/home/volker/work/pdfbox-3.0/pdfbox-layout-awt/target/pdfbox-layout-awt-3.0.9-SNAPSHOT.jar</systemPath>
         </dependency>
-
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.26.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-jcl</artifactId>
+            <version>2.26.1</version>
+        </dependency>
     </dependencies>
 
     <build>
