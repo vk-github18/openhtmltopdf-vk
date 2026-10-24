@@ -525,29 +525,8 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
             // to implement letter-spacing CSS property.
             // Justification must be done through TJ rendering
             // because Tw param does not work for UNICODE fonts
-// TODO            if (glyphLayoutProcessor==null || info.getNonSpaceAdjust()!=0.0f) {
-                Object[] array = makeJustificationArray(s, info);
-                _cp.drawStringWithPositioning(array);
-/* TODO            } else {
-                StringBuilder sb = new StringBuilder();
-                s.codePoints().forEachOrdered(cp -> {
-                    if (InlineText.isJustifySpaceCodePoint(cp)) {
-                        if(sb.length()>0) {
-                            _cp.drawString(s);
-                            sb.delete(0, sb.length());
-                        }
-                        float adjustment = -(info.getSpaceAdjust() / _dotsPerPoint) * 1000 / (_font.getSize2D() / _dotsPerPoint);
-                        _cp.drawStringWithPositioning(new Float[] { adjustment });
-                    } else {
-                        sb.append(Character.toChars(cp));
-                    }
-                });
-                if(sb.length()>0) {
-                    _cp.drawString(s);
-                    sb.delete(0, sb.length());
-                }
-            }
-TODO */
+            Object[] array = makeJustificationArray(s, info);
+            _cp.drawStringWithPositioning(array);
         } else {
             _cp.drawString(s);
         }
