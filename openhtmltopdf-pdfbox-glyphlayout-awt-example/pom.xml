@@ -13,9 +13,9 @@
 
     <packaging>jar</packaging>
 
-    <name>Openhtmltopdf PDFBox GlayphLayoutAwt</name>
+    <name>Openhtmltopdf PDFBox GlyphLayoutAwt Example</name>
     <description>Openhtmltopdf is a CSS 2.1 renderer written in Java.
-        This artifact supports glyph layout for DIN 91379 and complex scripts
+        This artifact demonstrates glyph layout for DIN 91379 and other complex scripts
         using PDFBox GlyphLayoutProcessorAwt.
     </description>
 
@@ -29,21 +29,6 @@
     <properties>
         <pdfbox.version>3.0.9</pdfbox.version>
     </properties>
-
-    <!-- TODO delete this -->
-    <repositories>
-        <repository>
-            <id>apache.snapshots</id>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
 
     <profiles>
         <profile>
@@ -83,9 +68,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox-layout-awt</artifactId>
-            <version>3.0.9-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>/home/volker/work/pdfbox-3.0/pdfbox-layout-awt/target/pdfbox-layout-awt-3.0.9-SNAPSHOT.jar</systemPath>
+            <version>${pdfbox.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -120,7 +103,6 @@
         </resources>
 
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -150,9 +132,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
-
     </build>
-
 </project>
