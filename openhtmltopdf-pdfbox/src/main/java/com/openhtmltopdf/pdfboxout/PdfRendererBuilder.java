@@ -26,11 +26,7 @@ import java.util.logging.Level;
 public class PdfRendererBuilder extends BaseRendererBuilder<PdfRendererBuilder, PdfRendererBuilderState> {
 
     public PdfRendererBuilder() {
-        this(new PdfRendererBuilderState());
-    }
-
-    public PdfRendererBuilder(PdfRendererBuilderState pdfRendererBuilderState) {
-        super(pdfRendererBuilderState);
+        super(new PdfRendererBuilderState());
 
         for (CacheStore cacheStore : CacheStore.values()) {
             // Use the flyweight pattern to initialize all caches with a no-op implementation to
@@ -38,8 +34,6 @@ public class PdfRendererBuilder extends BaseRendererBuilder<PdfRendererBuilder, 
             state._caches.put(cacheStore, FSNoOpCacheStore.INSTANCE);
         }
     }
-
-
 
     /**
      * Run the XHTML/XML to PDF conversion and output to an output stream set by

@@ -147,7 +147,7 @@ public class PdfBoxRenderer implements Closeable, PageSupplier {
     /**
      * This method is constantly changing as options are added to the builder.
      */
-    protected PdfBoxRenderer(
+    PdfBoxRenderer(
             BaseDocument doc,
             UnicodeImplementation unicode,
             PageDimensions pageSize,
@@ -548,7 +548,7 @@ public class PdfBoxRenderer implements Closeable, PageSupplier {
         }
     }
 
-    protected PDPageContentStream initPage(
+    private PDPageContentStream initPage(
             PDDocument doc, float w, float h, int mainPageIndex, int shadowPageIndex) throws IOException {
 
         PDPage page = _pageSupplier.requestPage(doc, w, h, mainPageIndex, shadowPageIndex);
