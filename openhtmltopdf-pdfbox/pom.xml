@@ -63,47 +63,30 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.26.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-jcl</artifactId>
-            <version>2.26.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>3.0.9-SNAPSHOT</version>
+            <version>${pdfbox.version}</version>
             <scope>system</scope>
             <systemPath>/home/volker/work/pdfbox-3.0/pdfbox/target/pdfbox-3.0.9-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>fontbox</artifactId>
-            <version>3.0.9-SNAPSHOT</version>
+            <version>${pdfbox.version}</version>
             <scope>system</scope>
             <systemPath>/home/volker/work/pdfbox-3.0/fontbox/target/fontbox-3.0.9-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>io</artifactId>
-            <version>3.0.9-SNAPSHOT</version>
+            <version>${pdfbox.version}</version>
             <scope>system</scope>
             <systemPath>/home/volker/work/pdfbox-3.0/io/target/pdfbox-io-3.0.9-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>xmpbox</artifactId>
-            <version>3.0.9-SNAPSHOT</version>
+            <version>${pdfbox.version}</version>
             <scope>system</scope>
             <systemPath>/home/volker/work/pdfbox-3.0/xmpbox/target/xmpbox-3.0.9-SNAPSHOT.jar</systemPath>
         </dependency>
@@ -123,17 +106,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.26.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.26.1</version>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -144,10 +116,6 @@
                 <includes>
                     <include>LICENSE*</include>
                 </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
             </resource>
         </resources>
 
@@ -188,7 +156,7 @@
     </build>
 
     <properties>
-        <pdfbox.version>3.0.9</pdfbox.version>
+        <pdfbox.version>3.0.9-SNAPSHOT</pdfbox.version>
     </properties>
 
 </project>

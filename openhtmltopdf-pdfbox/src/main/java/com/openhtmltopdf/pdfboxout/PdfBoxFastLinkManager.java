@@ -610,7 +610,7 @@ public class PdfBoxFastLinkManager {
             if (_pdfUa != null) {
                 _pdfUa.addLink(anchor, target, annot.getPdAnnotation(), page);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new PdfContentStreamAdapter.PdfException("processLink", e);
         }
     }
