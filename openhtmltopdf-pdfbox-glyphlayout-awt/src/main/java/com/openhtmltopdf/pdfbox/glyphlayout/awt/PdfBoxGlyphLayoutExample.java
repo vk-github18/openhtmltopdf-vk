@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -84,7 +85,7 @@ public class PdfBoxGlyphLayoutExample {
             builder.usePdfUaAccessibility(accessible);
             builder.usePdfAConformance(pdfAConformance);
             builder.withProducer("openhtmltopdf-pdfbox-glyphlayout-example");
-            builder.toStream(new FileOutputStream(out));
+            builder.toStream(Files.newOutputStream(out.toPath()));
             builder.usePDDocument(doc);
             builder.useFont(new PDFontSupplier(arimo), "Arimo");
             builder.useFont(new PDFontSupplier(arabic), "Noto Sans Arabic");
