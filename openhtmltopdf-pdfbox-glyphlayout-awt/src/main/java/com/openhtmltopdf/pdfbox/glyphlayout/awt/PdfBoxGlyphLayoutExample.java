@@ -29,7 +29,7 @@ public class PdfBoxGlyphLayoutExample {
         String[] exampleHtmlPathArray = new String[]{
                 "/html/NoGlyphLayoutExampleDin91379.html",
                 "/html/GlyphLayoutExampleBidi.html"};
-        boolean[] useGlyphLayoutProcessorArray = new boolean[] {false, true};
+        boolean[] useGlyphLayoutProcessorArray = new boolean[] {/*false,*/ true};
         boolean[] useActualTextArray = new boolean[] {false, true};
         boolean[] accessibleArray = new boolean[] {false, true};
         PdfRendererBuilder.PdfAConformance[] pdfAConformanceArray = new PdfRendererBuilder.PdfAConformance[]
