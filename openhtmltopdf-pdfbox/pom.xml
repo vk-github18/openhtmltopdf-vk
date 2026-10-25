@@ -26,10 +26,6 @@
         </license>
     </licenses>
 
-    <properties>
-        <pdfbox.version>3.0.9-SNAPSHOT</pdfbox.version>
-    </properties>
-
     <profiles>
         <profile>
             <id>release</id>
@@ -140,4 +136,9 @@
         </plugins>
 
     </build>
+
+    <properties>
+        <pdfbox.version>3.0.9-SNAPSHOT</pdfbox.version>
+    </properties>
+
 </project>
