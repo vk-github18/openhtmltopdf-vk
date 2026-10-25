@@ -13,10 +13,10 @@
 
     <packaging>jar</packaging>
 
-    <name>Openhtmltopdf PDFBox GlayphLayoutAwt</name>
+    <name>Openhtmltopdf PDFBox GlyphLayoutAwt example</name>
     <description>Openhtmltopdf is a CSS 2.1 renderer written in Java.
-        This artifact supports glyph layout for DIN 91379 and complex scripts
-        using PDFBox GlyphLayoutProcessorAwt.
+    	This artifact demonstrates glyph layout for DIN 91379 and 
+    	complex scripts using PDFBox GlyphLayoutProcessorAwt.
     </description>
 
     <licenses>
