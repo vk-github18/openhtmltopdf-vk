@@ -59,8 +59,12 @@ public class PdfBoxTextRenderer implements TextRenderer {
     // Quiet the font metrics not available message.
     private boolean _loggedMissingMetrics = false;
 
-    public void setup(FontContext context, BidiReorderer reorderer, GlyphLayoutProcessorInterface glyphLayoutProcessor) {
+    public void setup(FontContext context, BidiReorderer reorderer) {
         this._reorderer = reorderer;
+    }
+
+    // Set a glyph layout processor
+    public void setGlyphLayoutProcessor(GlyphLayoutProcessorInterface glyphLayoutProcessor) {
         this._glyphLayoutProcessor = glyphLayoutProcessor;
     }
 
