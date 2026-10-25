@@ -13,7 +13,9 @@ import com.openhtmltopdf.pdfboxout.PdfBoxFontResolver.FontGroup;
 import com.openhtmltopdf.util.LogMessageId;
 import com.openhtmltopdf.util.OpenUtil;
 import com.openhtmltopdf.util.XRLog;
+import org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface;
 import org.apache.pdfbox.pdmodel.PDDocument;
+
 
 import java.awt.*;
 import java.io.Closeable;
@@ -174,18 +176,15 @@ public class PdfRendererBuilder extends BaseRendererBuilder<PdfRendererBuilder, 
      *
      * <p>Example:
      * <pre>
-     *   builder.useGlyphLayoutProcessor(new org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt());
+     *   import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
+     *   ...
+     *   builder.useGlyphLayoutProcessor(new GlyphLayoutProcessorAwt());
      * </pre>
      *
-     * <p>When present, the renderer sets this processor on each {@link org.apache.pdfbox.pdmodel.PDPageContentStream}
-     * created while generating the PDF. This enables using advanced glyph shaping / glyph positioning
-     * backends (AWT, FOP, Harfbuzz-based, etc.) that implement PDFBox's {@code GlyphLayoutProcessorInterface}.</p>
-     *
-     * @param glyphLayoutProcessor an implementation of {@code org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface}
-     *                             used for complex glyph layout (may be {@code null} to disable)
+     * @param glyphLayoutProcessor glyph layout processor for complex glyph layout
      * @return this builder for fluent chaining
      */
-    public PdfRendererBuilder useGlyphLayoutProcessor(org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface glyphLayoutProcessor) {
+    public PdfRendererBuilder useGlyphLayoutProcessor(GlyphLayoutProcessorInterface glyphLayoutProcessor) {
         state._glyphLayoutProcessor = glyphLayoutProcessor;
         return this;
     }
