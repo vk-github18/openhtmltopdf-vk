@@ -27,7 +27,7 @@
     </licenses>
 
     <properties>
-        <pdfbox.version>3.0.9_SNAPSHOT</pdfbox.version>
+        <pdfbox.version>3.0.9-SNAPSHOT</pdfbox.version>
     </properties>
 
     <profiles>
@@ -68,9 +68,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox-layout-awt</artifactId>
-            <version>3.0.9-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>/home/volker/work/pdfbox-3.0/pdfbox-layout-awt/target/pdfbox-layout-awt-3.0.9-SNAPSHOT.jar</systemPath>
+	    <version>${pdfbox.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
