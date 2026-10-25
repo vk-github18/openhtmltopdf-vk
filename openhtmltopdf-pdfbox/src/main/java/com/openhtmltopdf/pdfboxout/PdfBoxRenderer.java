@@ -670,6 +670,9 @@ public class PdfBoxRenderer implements Closeable, PageSupplier {
                 _pageSupplier.requestPage(doc, shadowWidth, shadowHeight, mainPageIndex, i);
 
             try (PDPageContentStream shadowCs = new PDPageContentStream(doc, shadowPdPage, AppendMode.APPEND, !_testMode)) {
+                if (_glyphLayoutProcessor != null) {
+                    shadowCs.setGlyphLayoutProcessor(_glyphLayoutProcessor);
+                }
                 _outputDevice.initializePage(shadowCs, shadowPdPage, shadowHeight);
                 c.setShadowPageNumber(i);
 
