@@ -1,6 +1,7 @@
 // Tests built with Copilot assistance
 package com.openhtmltopdf.pdfbox.glyphlayout.awt;
 
+import com.openhtmltopdf.pdfboxout.PDFontSupplier;
 import com.openhtmltopdf.pdfboxout.PdfBoxFSFont;
 import com.openhtmltopdf.pdfboxout.PdfBoxFontResolver;
 import com.openhtmltopdf.pdfboxout.PdfBoxTextRenderer;
@@ -9,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import com.openhtmltopdf.css.constants.IdentValue;
 import com.openhtmltopdf.extend.FontContext;
@@ -28,7 +29,7 @@ public class PdfBoxGlyphLayoutTest {
 
     @Test
     public void testComplexTextRendersAcrossShadowPages() throws Exception {
-        String exampleHtmlPath = "/html/NoGlyphLayoutExampleDin91379.html";
+        String exampleHtmlPath = "/html/GlyphLayoutExampleDin91379.html";
 
         InputStream is = PdfBoxGlyphLayoutExample.class.getResourceAsStream(exampleHtmlPath);
         Objects.requireNonNull(is, "Could not find Html resource "+ exampleHtmlPath);
@@ -37,21 +38,73 @@ public class PdfBoxGlyphLayoutTest {
         String lines = br.lines().filter(s->!s.matches("</?html")).collect(Collectors.joining("\n"));
         String html = "<html lang=\"en\" xmlns=\"http://www.w3.org/1999/html\">\n"
                 + lines
-                + lines
+//                + lines
                 + "</html>\n";
 
+        InputStream fontIs = getClass().getResourceAsStream("/fonts/arimo/Arimo-Regular.ttf");
+        Assert.assertNotNull("Arimo font resource missing", fontIs);
+
         try (PDDocument doc = new PDDocument()) {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            FileOutputStream out = new FileOutputStream("testComplexTextRendersAcrossShadowPages.pdf");
+            GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
+            PDType0Font font = glyphLayoutProcessor.loadFont(doc, fontIs); // fonts must be loaded by GlyphLayoutProcessor
 
             PdfRendererBuilder builder = new PdfRendererBuilder()
+                    .useGlyphLayoutProcessor(glyphLayoutProcessor)
+                    .useFont(new PDFontSupplier(font), "Arimo")
                     .usePDDocument(doc)
-                    .useGlyphLayoutProcessor(new GlyphLayoutProcessorAwt())
                     .withHtmlContent(html, null)
                     .toStream(out);
 
             builder.run();
+            out.close();
+            Assert.assertTrue(doc.getNumberOfPages() > 2);
+        }
+    }
 
-            Assert.assertTrue(doc.getNumberOfPages() > 0);
+    @Test
+    public void getWidthDiffersWhenGlyphLayoutProcessorIsEnabled() throws Exception {
+        String arabicLigature = "\u0644\u0627"; // "لا" (lam + alef ligature)
+
+        try (PDDocument doc = new PDDocument()) {
+            GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
+
+            try (InputStream in = getClass().getResourceAsStream("/fonts/noto/NotoSansArabic-Regular.ttf")) {
+                Assert.assertNotNull("Noto Sans Arabic font resource missing", in);
+                PDType0Font font = glyphLayoutProcessor.loadFont(doc, in);
+
+                PdfBoxFSFont fsFont = new PdfBoxFSFont(
+                        java.util.Collections.singletonList(
+                                new PdfBoxFontResolver.FontDescription(
+                                        doc,
+                                        () -> font,
+                                        IdentValue.NORMAL,
+                                        400,
+                                        "Noto Sans Arabic",
+                                        false,
+                                        false,
+                                        FSNoOpCacheStore.INSTANCE
+                                )
+                        ),
+                        24f
+                );
+
+                PdfBoxTextRenderer withoutProcessor = new PdfBoxTextRenderer();
+                withoutProcessor.setup(new FontContext() {}, null);
+
+                PdfBoxTextRenderer withProcessor = new PdfBoxTextRenderer();
+                withProcessor.setup(new FontContext() {}, null);
+                withoutProcessor.setGlyphLayoutProcessor(glyphLayoutProcessor);
+
+                int widthWithout = withoutProcessor.getWidth(new FontContext() {}, fsFont, arabicLigature);
+                int widthWith = withProcessor.getWidth(new FontContext() {}, fsFont, arabicLigature);
+
+                Assert.assertNotEquals(
+                        "Width should differ when glyph layout processing is enabled for shaped Arabic text",
+                        widthWithout,
+                        widthWith
+                );
+            }
         }
     }
 
