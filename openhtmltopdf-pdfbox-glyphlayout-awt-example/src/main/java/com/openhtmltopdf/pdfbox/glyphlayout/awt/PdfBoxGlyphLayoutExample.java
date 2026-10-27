@@ -10,7 +10,6 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import java.awt.FontFormatException;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,12 +59,12 @@ public class PdfBoxGlyphLayoutExample {
                 useActualText?"ActualText":"NoActualText", accessible?"Accessible":"NotAccessible", pdfAConformance.toString()));
 
         try (PDDocument doc = new PDDocument()) {
-            GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
+            AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options = new AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions();
             if (useActualText) {
-                AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options = new AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions();
                 options.useActualText();
-                glyphLayoutProcessor = new GlyphLayoutProcessorAwt(options);
             }
+            GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt(options);
+
             PDFont arimo = glyphLayoutProcessor.loadFont(doc, this.getClass().getResourceAsStream("/fonts/arimo/Arimo-Regular.ttf"));
             PDFont arabic = glyphLayoutProcessor.loadFont(doc, this.getClass().getResourceAsStream("/fonts/noto/NotoSansArabic-Regular.ttf"));
 
@@ -82,15 +81,15 @@ public class PdfBoxGlyphLayoutExample {
             BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String html = br.lines().collect(Collectors.joining("\n"));
 
-            builder.usePdfUaAccessibility(accessible);
-            builder.usePdfAConformance(pdfAConformance);
-            builder.withProducer("openhtmltopdf-pdfbox-glyphlayout-example");
-            builder.toStream(Files.newOutputStream(out.toPath()));
-            builder.usePDDocument(doc);
-            builder.useFont(new PDFontSupplier(arimo), "Arimo");
-            builder.useFont(new PDFontSupplier(arabic), "Noto Sans Arabic");
-            builder.withHtmlContent(html, "");
-            builder.run();
+            builder.usePdfUaAccessibility(accessible)
+                .usePdfAConformance(pdfAConformance)
+                .withProducer("openhtmltopdf-pdfbox-glyphlayout-example")
+                .toStream(Files.newOutputStream(out.toPath()))
+                .usePDDocument(doc)
+                .useFont(new PDFontSupplier(arimo), "Arimo")
+                .useFont(new PDFontSupplier(arabic), "Noto Sans Arabic")
+                .withHtmlContent(html, "")
+                .run();
         }
     }
 }

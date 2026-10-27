@@ -442,7 +442,7 @@ public class PdfBoxRenderer implements Closeable, PageSupplier {
     }
 
     /**
-     *  Creates a PDF with setup specified by builder. On finsihing or failing, saves (if successful) and closes the PDF document.
+     *  Creates a PDF with setup specified by builder. On finishing or failing, saves (if successful) and closes the PDF document.
      */
     public void createPDF() throws IOException {
         createPdfFast(true, 0);
