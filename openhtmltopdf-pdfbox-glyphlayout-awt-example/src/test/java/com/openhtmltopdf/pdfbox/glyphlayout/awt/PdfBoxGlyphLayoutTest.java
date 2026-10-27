@@ -36,7 +36,7 @@ public class PdfBoxGlyphLayoutTest {
     public void testComplexTextRendersAcrossShadowPages() throws Exception {
         String exampleHtmlPath = "/html/GlyphLayoutExampleDin91379.html";
 
-        InputStream is = PdfBoxGlyphLayoutExample.class.getResourceAsStream(exampleHtmlPath);
+        InputStream is = PdfBoxGlyphLayoutExampleBidi.class.getResourceAsStream(exampleHtmlPath);
         Objects.requireNonNull(is, "Could not find Html resource " + exampleHtmlPath);
 
         BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
