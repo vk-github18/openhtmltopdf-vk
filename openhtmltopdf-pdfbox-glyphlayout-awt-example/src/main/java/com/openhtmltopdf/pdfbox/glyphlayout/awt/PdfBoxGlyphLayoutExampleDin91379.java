@@ -49,8 +49,10 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
             String html = br.lines().collect(Collectors.joining("\n"));
 
             PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.useGlyphLayoutProcessor(glyphLayoutProcessor)
-                    .toStream(Files.newOutputStream(out.toPath()))
+            if (useGlyphLayoutProcessor) {
+                builder.useGlyphLayoutProcessor(glyphLayoutProcessor);
+            }
+            builder.toStream(Files.newOutputStream(out.toPath()))
                     .usePDDocument(doc)
                     .useFont(new PDFontSupplier(arimo), "Arimo")
                     .withHtmlContent(html, "")
