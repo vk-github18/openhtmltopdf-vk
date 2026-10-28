@@ -55,11 +55,52 @@ public class PdfBoxGlyphLayoutTest {
             PDType0Font arimo = glyphLayoutProcessor.loadFont(doc, fontIs); // fonts must be loaded by GlyphLayoutProcessor
 
             PdfRendererBuilder builder = new PdfRendererBuilder();
-            builder.useGlyphLayoutProcessor(glyphLayoutProcessor).toStream(out).usePDDocument(doc).useFont(new PDFontSupplier(arimo), "Arimo").withHtmlContent(html, "").run();
+            builder.useGlyphLayoutProcessor(glyphLayoutProcessor)
+                    .toStream(out)
+                    .usePDDocument(doc)
+                    .useFont(new PDFontSupplier(arimo), "Arimo")
+                    .withHtmlContent(html, "")
+                    .run();
 
             Assert.assertTrue(doc.getNumberOfPages() > 2);
         }
     }
+
+    /**
+     * Test rendering of a document with letter spacing
+     * <p>
+     * The resulting PDF file has to be checked visually
+     * @throws Exception
+     */
+    @Test
+    public void testLetterSpacing() throws Exception {
+        String exampleHtmlPath = "/html/GlyphLayoutExampleLetterSpacing.html";
+
+        InputStream is = PdfBoxGlyphLayoutExampleBidi.class.getResourceAsStream(exampleHtmlPath);
+        Objects.requireNonNull(is, "Could not find Html resource " + exampleHtmlPath);
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+
+        String html = br.lines().collect(Collectors.joining("\n"));
+
+        InputStream fontIs = getClass().getResourceAsStream("/fonts/arimo/Arimo-Regular.ttf");
+        Assert.assertNotNull("Arimo font resource missing", fontIs);
+
+        try (   PDDocument doc = new PDDocument();
+                FileOutputStream out = new FileOutputStream("testLetterSpacing.pdf")) {
+
+            GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
+            PDType0Font arimo = glyphLayoutProcessor.loadFont(doc, fontIs); // fonts must be loaded by GlyphLayoutProcessor
+
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.useGlyphLayoutProcessor(glyphLayoutProcessor).
+                    toStream(out).usePDDocument(doc).
+                    useFont(new PDFontSupplier(arimo), "Arimo").
+                    withHtmlContent(html, "").
+                    run();
+        }
+    }
+
 
     /**
      * Test, that the computed width differs for an arabic ligature
