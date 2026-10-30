@@ -156,6 +156,13 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+        <id>glyphlayout-example</id>
+        <modules>
+          <module>openhtmltopdf-pdfbox-glyphlayout-awt-example</module>
+        </modules>
+      </profile>
   </profiles>
 
   <build>
@@ -294,7 +301,7 @@
   </build>
 
   <properties>
-    <revision>1.1.5-SNAPSHOT</revision> <!-- only used for local development, overriden in github actions -->
+    <revision>1.1.105-glyphlayout</revision> <!-- only used for local development, overriden in github actions -->
     <open.batik.version>1.17</open.batik.version>
 
     <!-- Please keep xmlgraphics-commons up to date with batik. -->

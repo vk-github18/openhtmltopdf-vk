@@ -7,6 +7,7 @@ import com.openhtmltopdf.outputdevice.helper.BaseRendererBuilder;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder.CacheStore;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder.PdfAConformance;
 
+import org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import java.io.OutputStream;
@@ -32,4 +33,6 @@ public class PdfRendererBuilderState extends BaseRendererBuilder.BaseRendererBui
 	public byte[] _colorProfile;
 	public PageSupplier _pageSupplier;
 	public NamespaceHandler _namespaceHandler;
+	public GlyphLayoutProcessorInterface _glyphLayoutProcessor;
+
 }

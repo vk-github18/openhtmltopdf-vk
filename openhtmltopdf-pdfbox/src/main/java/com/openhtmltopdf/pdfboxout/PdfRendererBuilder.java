@@ -13,7 +13,9 @@ import com.openhtmltopdf.pdfboxout.PdfBoxFontResolver.FontGroup;
 import com.openhtmltopdf.util.LogMessageId;
 import com.openhtmltopdf.util.OpenUtil;
 import com.openhtmltopdf.util.XRLog;
+import org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface;
 import org.apache.pdfbox.pdmodel.PDDocument;
+
 
 import java.awt.*;
 import java.io.Closeable;
@@ -168,6 +170,25 @@ public class PdfRendererBuilder extends BaseRendererBuilder<PdfRendererBuilder, 
         state._os = out;
         return this;
     }
+
+    /**
+     * Supply a PDFBox glyph layout processor to be used when rendering text.
+     *
+     * <p>Example:
+     * <pre>
+     *   import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
+     *   ...
+     *   builder.useGlyphLayoutProcessor(new GlyphLayoutProcessorAwt());
+     * </pre>
+     *
+     * @param glyphLayoutProcessor glyph layout processor for complex glyph layout
+     * @return this builder for fluent chaining
+     */
+    public PdfRendererBuilder useGlyphLayoutProcessor(GlyphLayoutProcessorInterface glyphLayoutProcessor) {
+        state._glyphLayoutProcessor = glyphLayoutProcessor;
+        return this;
+    }
+
 
     /**
      * Set the PDF version, typically we use 1.7. If you set a lower version, it is
