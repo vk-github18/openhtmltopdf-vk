@@ -231,7 +231,7 @@ public class PdfBoxGlyphLayoutTest {
                 int widthWithout = withoutProcessor.getWidth(new FontContext() {}, fsFont, combined);
                 int widthWith = withProcessor.getWidth(new FontContext() {}, fsFont, combined);
 
-                Assert.assertEquals("Combining marks should change measurement when shaping is active", widthWithout, widthWith);
+                Assert.assertEquals("Combining diacritical marks should not change measurement when shaping is active", widthWithout, widthWith);
             }
         }
     }
