@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,8 +33,9 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
 
     public void run(String exampleHtmlPath, boolean useGlyphLayoutProcessor) throws IOException, FontFormatException {
         String baseName = exampleHtmlPath.replaceAll("^/[^/]*/([^.]*).*$", "$1");
-
-        File out = new File(String.format("%s_%s.pdf", baseName,
+        Path outputDir = Paths.get("target", "glyphlayout-example");
+        Files.createDirectories(outputDir);
+        Path out = outputDir.resolve(String.format("%s_%s.pdf", baseName,
                 useGlyphLayoutProcessor ? "GlyphLayout" : "No_GlyphLayout"));
 
         try (PDDocument doc = new PDDocument()) {
@@ -52,7 +55,7 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
             if (useGlyphLayoutProcessor) {
                 builder.useGlyphLayoutProcessor(glyphLayoutProcessor);
             }
-            builder.toStream(Files.newOutputStream(out.toPath()))
+            builder.toStream(Files.newOutputStream(out))
                     .usePDDocument(doc)
                     .useFont(new PDFontSupplier(arimo), "Arimo")
                     .withHtmlContent(html, "")
@@ -60,4 +63,3 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
         }
     }
 }
-
