@@ -388,7 +388,7 @@ public class PdfBoxTextRenderer implements TextRenderer {
             result = _glyphLayoutProcessor.getStringWidth((PDType0Font) font, 1f, text) * 1000f;
         } else {
             result = font.getStringWidth(text);
-       }
+        }
         return result;
     }
 
@@ -409,7 +409,7 @@ public class PdfBoxTextRenderer implements TextRenderer {
 
         float result = 0f;
         try {
-                result = getFontStringWidth(description.get().getFont(), effectiveString) / 1000f * pdfBoxFont.getSize2D();
+            result = getFontStringWidth(description.get().getFont(), effectiveString) / 1000f * pdfBoxFont.getSize2D();
         } catch (IllegalArgumentException e) {
             /* PDFont::getStringWidth throws an IllegalArgumentException if the character doesn't exist in the font.
                We can do it one character by character instead, but first let's partition the string logarithmically

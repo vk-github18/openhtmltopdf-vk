@@ -28,6 +28,7 @@
 
     <properties>
         <pdfbox.version>3.0.8-glyphlayout</pdfbox.version>
+        <maven.test.skip>false</maven.test.skip>
     </properties>
 
     <profiles>
@@ -68,7 +69,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox-layout-awt</artifactId>
-	    <version>${pdfbox.version}</version>
+            <version>${pdfbox.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -109,7 +110,6 @@
         </resources>
 
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -136,6 +136,37 @@
                         <goals>
                             <goal>manifest</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <failIfNoTests>false</failIfNoTests>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>smoke-test</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.openhtmltopdf.pdfbox.glyphlayout.awt.PdfBoxGlyphLayoutExampleDin91379</mainClass>
+                            <classpathScope>runtime</classpathScope>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

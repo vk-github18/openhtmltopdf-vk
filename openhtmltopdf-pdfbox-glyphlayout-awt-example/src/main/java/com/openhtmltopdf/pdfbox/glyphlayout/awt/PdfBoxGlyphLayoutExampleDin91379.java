@@ -9,12 +9,13 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 
 import java.awt.*;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
  * @author Volker Kunert
  */
 public class PdfBoxGlyphLayoutExampleDin91379 {
+    public static final String OUTPUT_DIR_NAME = "openhtmltopdf-pdfbox-glyphlayout-awt-example/target/glyphlayout-example";
+
     public static void main(String[] args) throws Exception {
         new PdfBoxGlyphLayoutExampleDin91379().run("/html/GlyphLayoutExampleDin91379.html", true);
         new PdfBoxGlyphLayoutExampleDin91379().run("/html/NoGlyphLayoutExampleDin91379.html", false);
@@ -31,8 +34,9 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
 
     public void run(String exampleHtmlPath, boolean useGlyphLayoutProcessor) throws IOException, FontFormatException {
         String baseName = exampleHtmlPath.replaceAll("^/[^/]*/([^.]*).*$", "$1");
-
-        File out = new File(String.format("%s_%s.pdf", baseName,
+        Path outputDir = Paths.get(OUTPUT_DIR_NAME);
+        Files.createDirectories(outputDir);
+        Path out = outputDir.resolve(String.format("%s_%s.pdf", baseName,
                 useGlyphLayoutProcessor ? "GlyphLayout" : "No_GlyphLayout"));
 
         try (PDDocument doc = new PDDocument()) {
@@ -52,7 +56,7 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
             if (useGlyphLayoutProcessor) {
                 builder.useGlyphLayoutProcessor(glyphLayoutProcessor);
             }
-            builder.toStream(Files.newOutputStream(out.toPath()))
+            builder.toStream(Files.newOutputStream(out))
                     .usePDDocument(doc)
                     .useFont(new PDFontSupplier(arimo), "Arimo")
                     .withHtmlContent(html, "")
@@ -60,4 +64,3 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
         }
     }
 }
-
