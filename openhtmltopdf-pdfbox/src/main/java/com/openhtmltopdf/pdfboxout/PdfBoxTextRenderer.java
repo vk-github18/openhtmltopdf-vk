@@ -37,8 +37,6 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -394,45 +392,6 @@ public class PdfBoxTextRenderer implements TextRenderer {
         return result;
     }
 
-    private float getGlyphLayoutKerning(PdfBoxFSFont pdfBoxFont, String text, int index) {
-        if (_glyphLayoutProcessor == null || text == null || index <= 0 || index >= text.length()) {
-            return 0f;
-        }
-
-        int left = text.codePointBefore(index);
-        int right = text.codePointAt(index);
-        if (!OpenUtil.isSafeFontCodePointToPrint(left) || !OpenUtil.isSafeFontCodePointToPrint(right)) {
-            return 0f;
-        }
-
-        FontDescription description = drawingFont(pdfBoxFont, left);
-        if (description == null || description != drawingFont(pdfBoxFont, right)) {
-            return 0f;
-        }
-
-        if (!(description.getFont() instanceof PDType0Font)) {
-            return 0f;
-        }
-
-        PDType0Font pdFont = (PDType0Font) description.getFont();
-        if (!_glyphLayoutProcessor.supportsFont(pdFont)) {
-            return 0f;
-        }
-
-        try {
-            Method method = _glyphLayoutProcessor.getClass().getMethod("getKerning", PDType0Font.class, int.class, int.class);
-            Object result = method.invoke(_glyphLayoutProcessor, pdFont, left, right);
-            if (result instanceof Number) {
-                return ((Number) result).floatValue() / 1000f * pdfBoxFont.getSize2D();
-            }
-        } catch (NoSuchMethodException ignored) {
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            XRLog.log(Level.FINE, "Glyph layout kerning lookup failed", e);
-        }
-
-        return 0f;
-    }
-
     @Override
     public int getWidth(FontContext context, FSFont font, String string) {
         PdfBoxFSFont pdfBoxFont = (PdfBoxFSFont) font;
@@ -487,9 +446,6 @@ public class PdfBoxTextRenderer implements TextRenderer {
     @Override
     public int getWidth(FontContext context, FSFont font, String string, byte direction) {
         PdfBoxFSFont pdfBoxFont = (PdfBoxFSFont) font;
-        if (_glyphLayoutProcessor != null && pdfBoxFont.isKerning() && direction == BidiSplitter.LTR) {
-            return getWidth(context, font, string);
-        }
         if (!pdfBoxFont.isKerning() || direction != BidiSplitter.LTR) {
             return getWidth(context, font, string);
         }
@@ -523,11 +479,6 @@ public class PdfBoxTextRenderer implements TextRenderer {
         PdfBoxFSFont pdfBoxFont = (PdfBoxFSFont) font;
         if (!pdfBoxFont.isKerning() || direction != BidiSplitter.LTR || index <= 0 || index >= text.length()) {
             return 0f;
-        }
-
-        float glyphLayoutKerning = getGlyphLayoutKerning(pdfBoxFont, text, index);
-        if (glyphLayoutKerning != 0f) {
-            return glyphLayoutKerning;
         }
 
         int left = text.codePointBefore(index);
