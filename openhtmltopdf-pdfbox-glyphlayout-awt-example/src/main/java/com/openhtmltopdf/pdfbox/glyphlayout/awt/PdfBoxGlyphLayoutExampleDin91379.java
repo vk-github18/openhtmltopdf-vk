@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,7 +40,8 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
         Path out = outputDir.resolve(String.format("%s_%s.pdf", baseName,
                 useGlyphLayoutProcessor ? "GlyphLayout" : "No_GlyphLayout"));
 
-        try (PDDocument doc = new PDDocument()) {
+        try (PDDocument doc = new PDDocument();
+             OutputStream outputStream = Files.newOutputStream(out)) {
             AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options = new AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions();
             options.useActualText();
             GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt(options);
@@ -56,7 +58,7 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
             if (useGlyphLayoutProcessor) {
                 builder.useGlyphLayoutProcessor(glyphLayoutProcessor);
             }
-            builder.toStream(Files.newOutputStream(out))
+            builder.toStream(outputStream)
                     .usePDDocument(doc)
                     .useFont(new PDFontSupplier(arimo), "Arimo")
                     .withHtmlContent(html, "")

@@ -53,13 +53,13 @@ public class PdfBoxGlyphLayoutTest {
                     Assert.assertNotNull("Arimo font resource missing", fontIs);
 
                     try (PDDocument doc = new PDDocument();
-                         java.io.OutputStream out = Files.newOutputStream(output)) {
+                         java.io.OutputStream outputStream = Files.newOutputStream(output)) {
                         GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
                         PDType0Font arimo = glyphLayoutProcessor.loadFont(doc, fontIs);
 
                         PdfRendererBuilder builder = new PdfRendererBuilder();
                         builder.useGlyphLayoutProcessor(glyphLayoutProcessor)
-                                .toStream(out)
+                                .toStream(outputStream)
                                 .usePDDocument(doc)
                                 .useFont(new PDFontSupplier(arimo), "Arimo")
                                 .withHtmlContent(html, "")
