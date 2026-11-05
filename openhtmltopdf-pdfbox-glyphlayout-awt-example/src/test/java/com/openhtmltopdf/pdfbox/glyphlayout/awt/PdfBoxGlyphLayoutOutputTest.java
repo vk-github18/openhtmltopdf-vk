@@ -6,13 +6,14 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
@@ -23,15 +24,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/** Output correctness tests for glyph layout, fallback fonts, and bidi text. */
+/** Output correctness tests for glyph layout, fallback fonts, bidi, and line wrapping. */
 public class PdfBoxGlyphLayoutOutputTest {
     private static final String ARABIC_FONT = "/fonts/noto/NotoSansArabic-Regular.ttf";
     private static final String LATIN_FONT = "/fonts/arimo/Arimo-Regular.ttf";
     private static final String HTML_NS = "http://www.w3.org/1999/html";
+    private static final float LINE_BASELINE_TOLERANCE = 2f;
+    private static final float WORD_GAP_THRESHOLD = 2f;
 
     private static final class ExtractedOutput {
         final List<TextPosition> positions = new ArrayList<TextPosition>();
         final List<String> lines = new ArrayList<String>();
+        final List<List<String>> wordsByLine = new ArrayList<List<String>>();
         String text;
     }
 
@@ -106,41 +110,104 @@ public class PdfBoxGlyphLayoutOutputTest {
             };
             stripper.setSortByPosition(true);
             output.text = stripper.getText(document);
-
-            // PDFTextStripper's writeString callbacks are text runs, not necessarily
-            // visual lines. Reconstruct lines from glyph baselines and order glyphs
-            // left-to-right so a run split by bidi/font fallback does not look like a break.
-            Map<Integer, List<TextPosition>> byBaseline = new TreeMap<Integer, List<TextPosition>>();
-            for (TextPosition position : output.positions) {
-                int baseline = Math.round(position.getYDirAdj());
-                List<TextPosition> line = byBaseline.get(baseline);
-                if (line == null) {
-                    line = new ArrayList<TextPosition>();
-                    byBaseline.put(baseline, line);
-                }
-                line.add(position);
-            }
-
-            for (List<TextPosition> line : byBaseline.values()) {
-                Collections.sort(line, new Comparator<TextPosition>() {
-                    @Override
-                    public int compare(TextPosition first, TextPosition second) {
-                        return Float.compare(first.getXDirAdj(), second.getXDirAdj());
-                    }
-                });
-                StringBuilder lineText = new StringBuilder();
-                for (TextPosition position : line) {
-                    if (position.getUnicode() != null) {
-                        lineText.append(position.getUnicode());
-                    }
-                }
-                output.lines.add(lineText.toString().trim());
-            }
+            buildVisualLines(output);
             return output;
         }
     }
 
-    private String wrappingHtml(int widthPx, boolean kerning) {
+    /**
+     * TextStripper callbacks are text runs, not necessarily visual lines. Group
+     * positions by baseline, then order each line by x. This fixture is LTR Latin,
+     * so physical x order is also its expected logical order.
+     */
+    private void buildVisualLines(ExtractedOutput output) {
+        List<TextPosition> ordered = new ArrayList<TextPosition>(output.positions);
+        Collections.sort(ordered, new Comparator<TextPosition>() {
+            @Override
+            public int compare(TextPosition first, TextPosition second) {
+                int byBaseline = Float.compare(first.getYDirAdj(), second.getYDirAdj());
+                return byBaseline != 0 ? byBaseline : Float.compare(first.getXDirAdj(), second.getXDirAdj());
+            }
+        });
+
+        List<List<TextPosition>> lines = new ArrayList<List<TextPosition>>();
+        List<TextPosition> line = null;
+        float lineBaseline = Float.NaN;
+        for (TextPosition position : ordered) {
+            if (line == null || Math.abs(position.getYDirAdj() - lineBaseline) > LINE_BASELINE_TOLERANCE) {
+                line = new ArrayList<TextPosition>();
+                lines.add(line);
+                lineBaseline = position.getYDirAdj();
+            }
+            line.add(position);
+        }
+
+        for (List<TextPosition> linePositions : lines) {
+            Collections.sort(linePositions, new Comparator<TextPosition>() {
+                @Override
+                public int compare(TextPosition first, TextPosition second) {
+                    return Float.compare(first.getXDirAdj(), second.getXDirAdj());
+                }
+            });
+            List<String> words = wordsOnLine(linePositions);
+            if (!words.isEmpty()) {
+                output.wordsByLine.add(words);
+                StringBuilder lineText = new StringBuilder();
+                for (String word : words) {
+                    if (lineText.length() > 0) {
+                        lineText.append(' ');
+                    }
+                    lineText.append(word);
+                }
+                output.lines.add(lineText.toString());
+            }
+        }
+    }
+
+    private List<String> wordsOnLine(List<TextPosition> positions) {
+        List<String> words = new ArrayList<String>();
+        StringBuilder currentWord = new StringBuilder();
+        float previousRight = Float.NaN;
+
+        for (TextPosition position : positions) {
+            String unicode = position.getUnicode();
+            if (unicode == null || unicode.length() == 0) {
+                continue;
+            }
+
+            boolean whitespace = isWhitespace(unicode);
+            float gap = Float.isNaN(previousRight) ? 0f : position.getXDirAdj() - previousRight;
+            if (whitespace || (!Float.isNaN(previousRight) && gap > WORD_GAP_THRESHOLD)) {
+                appendWord(words, currentWord);
+            }
+            if (!whitespace) {
+                currentWord.append(unicode);
+            }
+            previousRight = position.getXDirAdj() + position.getWidthDirAdj();
+        }
+        appendWord(words, currentWord);
+        return words;
+    }
+
+    private boolean isWhitespace(String text) {
+        for (int i = 0; i < text.length();) {
+            int codePoint = text.codePointAt(i);
+            if (!Character.isWhitespace(codePoint) && !Character.isSpaceChar(codePoint)) {
+                return false;
+            }
+            i += Character.charCount(codePoint);
+        }
+        return true;
+    }
+
+    private void appendWord(List<String> words, StringBuilder currentWord) {
+        if (currentWord.length() > 0) {
+            words.add(currentWord.toString());
+            currentWord.setLength(0);
+        }
+    }
+
+    private String wrappingHtml(int widthPx) {
         StringBuilder text = new StringBuilder();
         for (int i = 0; i < 12; i++) {
             if (i > 0) {
@@ -154,26 +221,29 @@ public class PdfBoxGlyphLayoutOutputTest {
                 + "</head><body><div class=\"sample\">" + text + "</div></body></html>";
     }
 
-    private String withoutWhitespace(String text) {
-        return text.replaceAll("\\s+", "");
-    }
-
-    private String expectedWrappedText() {
-        StringBuilder expected = new StringBuilder();
+    private List<String> expectedWords() {
+        List<String> expected = new ArrayList<String>();
         for (int i = 0; i < 12; i++) {
-            expected.append("AVATAR");
+            expected.add("AVATAR");
         }
-        return expected.toString();
+        return expected;
     }
 
-    private void assertExpectedText(ExtractedOutput output, String expected) {
-        Assert.assertEquals("Rendering must preserve all text without losing or duplicating glyphs",
-                expected, withoutWhitespace(output.text));
-        Assert.assertFalse("The output should contain positioned glyphs", output.positions.isEmpty());
-        Assert.assertFalse("The output should contain at least one visual line", output.lines.isEmpty());
+    private List<String> flatten(List<List<String>> wordsByLine) {
+        List<String> allWords = new ArrayList<String>();
+        for (List<String> line : wordsByLine) {
+            allWords.addAll(line);
+        }
+        return allWords;
     }
 
-    private boolean hasVisiblePixels(java.awt.image.BufferedImage image) {
+    private void assertExpectedWrappedText(ExtractedOutput output) {
+        Assert.assertEquals("The visual lines must retain every input word, exactly once and in source order",
+                expectedWords(), flatten(output.wordsByLine));
+        Assert.assertTrue("The fixture should wrap onto at least two visual lines", output.wordsByLine.size() >= 2);
+    }
+
+    private boolean hasVisiblePixels(BufferedImage image) {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 if ((image.getRGB(x, y) & 0x00ffffff) != 0x00ffffff) {
@@ -191,7 +261,7 @@ public class PdfBoxGlyphLayoutOutputTest {
 
         try (PDDocument document = Loader.loadPDF(pdf)) {
             Assert.assertEquals("The bidi example should fit on one page", 1, document.getNumberOfPages());
-            java.awt.image.BufferedImage image = new org.apache.pdfbox.rendering.PDFRenderer(document).renderImageWithDPI(0, 96);
+            BufferedImage image = new PDFRenderer(document).renderImageWithDPI(0, 96);
             Assert.assertEquals("A4 page width at 96 DPI", 794, image.getWidth());
             Assert.assertEquals("A4 page height at 96 DPI", 1123, image.getHeight());
             Assert.assertTrue("The bidi example should paint visible text", hasVisiblePixels(image));
@@ -252,14 +322,13 @@ public class PdfBoxGlyphLayoutOutputTest {
         ExtractedOutput kerningNoGlyph = null;
 
         // Find an actual wrapping threshold where kerning changes the break positions.
-        // This avoids depending on one font's exact metrics while still exercising breaks.
         for (int width = 300; width <= 380; width += 2) {
-            String html = wrappingHtml(width, false);
+            String html = wrappingHtml(width);
             ExtractedOutput noKern = extract(render(html, false, false));
             ExtractedOutput kern = extract(render(html, true, false));
-            assertExpectedText(noKern, expectedWrappedText());
-            assertExpectedText(kern, expectedWrappedText());
-            if (!noKern.lines.equals(kern.lines)) {
+            assertExpectedWrappedText(noKern);
+            assertExpectedWrappedText(kern);
+            if (!noKern.wordsByLine.equals(kern.wordsByLine)) {
                 widthWhereKerningChangesBreaks = width;
                 noKerningNoGlyph = noKern;
                 kerningNoGlyph = kern;
@@ -267,20 +336,19 @@ public class PdfBoxGlyphLayoutOutputTest {
             }
         }
 
-        Assert.assertTrue("The test must find a width where enabling kerning changes line breaks",
+        Assert.assertTrue("The tested widths must include a case where kerning changes the word-to-line assignment",
                 widthWhereKerningChangesBreaks >= 0);
-        Assert.assertNotEquals("Unkerned and kerned line assignments should differ",
-                noKerningNoGlyph.lines, kerningNoGlyph.lines);
+        Assert.assertNotEquals(noKerningNoGlyph.wordsByLine, kerningNoGlyph.wordsByLine);
 
-        String boundaryHtml = wrappingHtml(widthWhereKerningChangesBreaks, false);
-        ExtractedOutput noKerningWithGlyph = extract(render(boundaryHtml, false, true));
-        ExtractedOutput kerningWithGlyph = extract(render(boundaryHtml, true, true));
-        assertExpectedText(noKerningWithGlyph, expectedWrappedText());
-        assertExpectedText(kerningWithGlyph, expectedWrappedText());
+        String htmlAtBoundary = wrappingHtml(widthWhereKerningChangesBreaks);
+        ExtractedOutput noKerningWithGlyph = extract(render(htmlAtBoundary, false, true));
+        ExtractedOutput kerningWithGlyph = extract(render(htmlAtBoundary, true, true));
+        assertExpectedWrappedText(noKerningWithGlyph);
+        assertExpectedWrappedText(kerningWithGlyph);
 
-        // Glyph layout supplies the shaped advances itself; the independent PDFBox
-        // pair-kerning option must not apply a second kerning adjustment.
-        Assert.assertEquals("Kerning on/off must produce the same breaks when glyph layout is active",
-                noKerningWithGlyph.lines, kerningWithGlyph.lines);
+        // Glyph layout computes advances for the shaped run. The separate PDFBox
+        // pair-kerning option must not be added again when glyph layout is active.
+        Assert.assertEquals("Toggling pair kerning must not move words to different lines with glyph layout enabled",
+                noKerningWithGlyph.wordsByLine, kerningWithGlyph.wordsByLine);
     }
 }
