@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -28,7 +29,7 @@ public class PdfBoxGlyphLayoutVisualTest {
 
         try (InputStream htmlStream = getClass().getResourceAsStream(BIDI_HTML)) {
             Assert.assertNotNull("Bidi HTML resource missing", htmlStream);
-            String html = new String(htmlStream.readAllBytes(), StandardCharsets.UTF_8);
+            String html = new String(toByteArray(htmlStream), StandardCharsets.UTF_8);
 
             try (PDDocument document = new PDDocument();
                  InputStream arabicFontStream = getClass().getResourceAsStream(ARABIC_FONT);
@@ -59,6 +60,16 @@ public class PdfBoxGlyphLayoutVisualTest {
             Assert.assertEquals("The bidi fixture should fit on one page", 1, renderedDocument.getNumberOfPages());
             return new PDFRenderer(renderedDocument).renderImageWithDPI(0, 96);
         }
+    }
+
+    private byte[] toByteArray(InputStream input) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        byte[] data = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = input.read(data)) != -1) {
+            buffer.write(data, 0, bytesRead);
+        }
+        return buffer.toByteArray();
     }
 
     private long countNonWhitePixels(BufferedImage image) {
