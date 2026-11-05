@@ -45,7 +45,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 
-public class PdfBoxTextRenderer implements TextRenderer {
+public class PdfBoxTextRenderer implements TextRenderer, PDFontStringWidthInterface {
 
     private static final float TEXT_MEASURING_DELTA = 0.01f;
     private static final int FAST_FONT_RUN_MINIMUM_LENGTH = 32;
@@ -380,7 +380,7 @@ public class PdfBoxTextRenderer implements TextRenderer {
     /*
      * Compute string width for given font with default algorithm or GlyphLayoutProcessor
      */
-    private float getFontStringWidth(PDFont font, String text) throws IOException {
+    public float getFontStringWidth(PDFont font, String text) throws IOException {
         float result;
         if (_glyphLayoutProcessor != null
                 && font instanceof PDType0Font

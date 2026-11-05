@@ -459,6 +459,10 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
 
     @Override
     public void drawString(String s, float x, float y, JustificationInfo info) {
+        drawString( s, x, y, info, new PDFontDefaultStringWidth());
+    }
+
+    public void drawString(String s, float x, float y, JustificationInfo info, PDFontStringWidthInterface stringWidthInterface) {
         PDFont firstFont = _font.getFontDescriptions().get(0).getFont();
 
         String effectiveString = TextRenderer.getEffectivePrintableString(s);
@@ -466,7 +470,7 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
         // First check if the string contains printable characters only and
         // will print with the current font entirely.
         try {
-            firstFont.getStringWidth(effectiveString);
+            stringWidthInterface.getFontStringWidth(firstFont, effectiveString);
             // We got here, so all is good.
             drawStringFast(effectiveString, x, y, info, _font.getFontDescriptions().get(0), _font.getSize2D());
             return;
@@ -482,9 +486,9 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
             drawStringFast(run.string, x + xOffset, y, info, run.description, _font.getSize2D());
             try {
                 if (info == null) {
-                    xOffset += ((run.description.getFont().getStringWidth(run.string) / 1000f) * _font.getSize2D());
+                    xOffset += ((stringWidthInterface.getFontStringWidth(run.description.getFont(),run.string) / 1000f) * _font.getSize2D());
                 } else {
-                    xOffset += ((run.description.getFont().getStringWidth(run.string) / 1000f) * _font.getSize2D()) +
+                    xOffset += ((stringWidthInterface.getFontStringWidth(run.description.getFont(),run.string) / 1000f) * _font.getSize2D()) +
                                (run.spaceCharacterCount * info.getSpaceAdjust()) +
                                (run.otherCharacterCount * info.getNonSpaceAdjust());
                 }
