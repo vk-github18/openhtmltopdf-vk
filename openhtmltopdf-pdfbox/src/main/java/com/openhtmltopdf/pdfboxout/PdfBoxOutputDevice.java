@@ -97,6 +97,8 @@ public interface PdfBoxOutputDevice extends OutputDevice, Closeable {
     @Override
     void setFont(FSFont font);
 
+    void drawString(String s, float x, float y, JustificationInfo info, PDFontStringWidthInterface pdFontStringWidthInterface);
+
     void drawString(String s, float x, float y, JustificationInfo info);
 
     void drawStringFast(String s, float x, float y, JustificationInfo info,

@@ -74,13 +74,13 @@ public class PdfBoxTextRenderer implements TextRenderer, PDFontStringWidthInterf
 
     @Override
     public void drawString(OutputDevice outputDevice, String string, float x, float y) {
-        ((PdfBoxOutputDevice) outputDevice).drawString(string, x, y, null);
+        ((PdfBoxOutputDevice) outputDevice).drawString(string, x, y, null, this);
     }
 
     @Override
     public void drawString(
             OutputDevice outputDevice, String string, float x, float y, JustificationInfo info) {
-        ((PdfBoxOutputDevice) outputDevice).drawString(string, x, y, info);
+        ((PdfBoxOutputDevice) outputDevice).drawString(string, x, y, info, this);
     }
 
     @Override
