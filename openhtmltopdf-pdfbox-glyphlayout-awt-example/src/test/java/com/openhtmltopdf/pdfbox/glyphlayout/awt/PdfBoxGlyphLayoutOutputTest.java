@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -66,8 +67,20 @@ public class PdfBoxGlyphLayoutOutputTest {
     private String readHtmlResource(String resource) throws Exception {
         try (InputStream input = getClass().getResourceAsStream(resource)) {
             Assert.assertNotNull("Resource missing: " + resource, input);
-            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            byte[] bytes = toByteArray(input);
+            return new String(bytes, StandardCharsets.UTF_8);
         }
+    }
+
+    private byte[] toByteArray(InputStream input) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        byte[] data = new byte[4096];
+        int nRead;
+        while ((nRead = input.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        buffer.flush();
+        return buffer.toByteArray();
     }
 
     private TextPositionCollector collectPositions(PDDocument doc) throws Exception {
