@@ -8,20 +8,25 @@ import com.openhtmltopdf.pdfboxout.PdfBoxFSFont;
 import com.openhtmltopdf.pdfboxout.PdfBoxFontResolver;
 import com.openhtmltopdf.pdfboxout.PdfBoxTextRenderer;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,6 +35,36 @@ import java.util.stream.Collectors;
  */
 public class PdfBoxGlyphLayoutTest {
     public static final String OUTPUT_DIR_NAME = "target/glyphlayout-test";
+
+    private String renderAndExtractText(String html, String fontResource, String fontName, String outputName) throws Exception {
+        Path outputDir = Paths.get(OUTPUT_DIR_NAME);
+        Files.createDirectories(outputDir);
+        Path output = outputDir.resolve(outputName + ".pdf");
+
+        try (InputStream fontIs = PdfBoxGlyphLayoutTest.class.getResourceAsStream(fontResource)) {
+            Assert.assertNotNull("Font resource missing: " + fontResource, fontIs);
+
+            try (PDDocument doc = new PDDocument();
+                 OutputStream outputStream = Files.newOutputStream(output)) {
+                GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt();
+                PDType0Font font = glyphLayoutProcessor.loadFont(doc, fontIs);
+
+                PdfRendererBuilder builder = new PdfRendererBuilder();
+                builder.useGlyphLayoutProcessor(glyphLayoutProcessor)
+                        .toStream(outputStream)
+                        .usePDDocument(doc)
+                        .useFont(new PDFontSupplier(font), fontName)
+                        .withHtmlContent(html, "")
+                        .run();
+            }
+        }
+
+        try (PDDocument doc = Loader.loadPDF(output.toFile())) {
+            PDFTextStripper stripper = new PDFTextStripper();
+            stripper.setSortByPosition(true);
+            return stripper.getText(doc);
+        }
+    }
 
     /**
      * Smoke test: rendering a long DIN 91379 document should create several pages and complete successfully.
@@ -70,6 +105,34 @@ public class PdfBoxGlyphLayoutTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void testGlyphLayoutRendererProducesReadableArabicAndLatinText() throws Exception {
+        String html = "<html lang=\"en\" xmlns=\"http://www.w3.org/1999/html\">"
+                + "<body style=\"font-family: 'Noto Sans Arabic', Arial, sans-serif; font-size: 24px;\">"
+                + "Guten Tag السلام عليكم Good afternoon"
+                + "</body></html>";
+
+        String extracted = renderAndExtractText(html, "/fonts/noto/NotoSansArabic-Regular.ttf", "Noto Sans Arabic", "arabic-mixed-text");
+        String normalized = Normalizer.normalize(extracted, Normalizer.Form.NFC).toLowerCase(Locale.ROOT);
+
+        Assert.assertTrue("Rendered output should include the Latin prefix", normalized.contains("guten tag"));
+        Assert.assertTrue("Rendered output should include the Arabic phrase", normalized.contains("السلام عليكم") || normalized.contains("السلام"));
+    }
+
+    @Test
+    public void testGlyphLayoutRendererPreservesCombiningMarks() throws Exception {
+        String html = "<html lang=\"en\" xmlns=\"http://www.w3.org/1999/html\">"
+                + "<body style=\"font-family: Arimo, sans-serif; font-size: 24px;\">"
+                + "A\u030B C\u0327"
+                + "</body></html>";
+
+        String extracted = renderAndExtractText(html, "/fonts/arimo/Arimo-Regular.ttf", "Arimo", "combining-marks-text");
+        String normalized = Normalizer.normalize(extracted, Normalizer.Form.NFD);
+
+        Assert.assertTrue("Rendered output should keep the combining mark on A", normalized.contains("A\u030B"));
+        Assert.assertTrue("Rendered output should keep the combining mark on C", normalized.contains("C\u0327"));
     }
 
     @Test
