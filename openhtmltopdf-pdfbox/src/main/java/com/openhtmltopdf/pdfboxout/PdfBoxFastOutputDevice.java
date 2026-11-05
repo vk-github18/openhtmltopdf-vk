@@ -502,11 +502,11 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
      * A left-to-right run, drawn in the runs {@link PdfBoxTextRenderer#kernedRuns}
      * measured it with.
      */
-    private void drawKernedString(String s, float x, float y, JustificationInfo info) {
+    private void drawKernedString(String s, float x, float y, JustificationInfo info, PDFontStringWidthInterface stringWidthInterface) throws IOException {
         float xOffset = 0f;
         for (FontRun run : PdfBoxTextRenderer.kernedRuns(_font, s, _reorderer)) {
             drawStringFast(run.string, x + xOffset, y, info, run.description, _font.getSize2D(), run.kerning);
-            xOffset += (run.width() / 1000f) * _font.getSize2D();
+            xOffset += (stringWidthInterface.getFontStringWidth(run.description.getFont(), run.string) / 1000f) * _font.getSize2D();
             if (info != null) {
                 xOffset += (run.spaceCharacterCount * info.getSpaceAdjust()) +
                            (run.otherCharacterCount * info.getNonSpaceAdjust());
