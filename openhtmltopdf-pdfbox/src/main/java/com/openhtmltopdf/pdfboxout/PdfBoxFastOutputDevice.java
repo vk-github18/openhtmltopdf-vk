@@ -51,6 +51,7 @@ import de.rototor.pdfbox.graphics2d.PdfBoxGraphics2D;
 import de.rototor.pdfbox.graphics2d.PdfBoxGraphics2DFontTextDrawer;
 
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -213,6 +214,8 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
 
     private final PdfRendererBuilder.PdfAConformance _pdfAConformance;
 
+    private final GlyphLayoutProcessorInterface _glyphLayoutProcessor;
+
     // Cached ExtGState resources per alpha value, so the same alpha reuses
     // one graphics state object per document. Must not outlive this device
     // (one document) as COS objects can not be shared between documents.
@@ -236,24 +239,30 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
     }
 
     public PdfBoxFastOutputDevice(float dotsPerPoint, boolean testMode, boolean pdfUaConform, PdfRendererBuilder.PdfAConformance pdfAConformance) {
+        this(dotsPerPoint, testMode, pdfUaConform, pdfAConformance, null);
+    }
+
+    public PdfBoxFastOutputDevice(float dotsPerPoint, boolean testMode, boolean pdfUaConform, PdfRendererBuilder.PdfAConformance pdfAConformance, GlyphLayoutProcessorInterface glyphLayoutProcessor) {
         _dotsPerPoint = dotsPerPoint;
         _testMode = testMode;
         _pdfUaConform = pdfUaConform;
         _pdfAConformance = pdfAConformance;
         _pdfAConform = pdfAConformance != PdfRendererBuilder.PdfAConformance.NONE;
+        _glyphLayoutProcessor = glyphLayoutProcessor;
     }
 
-    /**
-     * A left-to-right run in a kerned font is drawn with the runs
-     * {@link PdfBoxTextRenderer} measured it with; all other text as before.
-     * The hyphen a soft hyphen displays was measured without kerning, also where
-     * <code>word-wrap: break-word</code> broke the line after the soft hyphen, so
-     * it is drawn behind a soft hyphen, which stops kerning.
-     */
+
+        /**
+         * A left-to-right run in a kerned font is drawn with the runs
+         * {@link PdfBoxTextRenderer} measured it with; all other text as before.
+         * The hyphen a soft hyphen displays was measured without kerning, also where
+         * <code>word-wrap: break-word</code> broke the line after the soft hyphen, so
+         * it is drawn behind a soft hyphen, which stops kerning.
+         */
     @Override
     protected void drawInlineTextString(RenderingContext c, InlineText inlineText, String text,
             float x, float y, JustificationInfo info) {
-        if (_font.isKerning() && inlineText.getTextDirection() == BidiSplitter.LTR) {
+        if (_glyphLayoutProcessor == null && _font.isKerning() && inlineText.getTextDirection() == BidiSplitter.LTR) {
             String runs = inlineText.isEndsOnSoftHyphen() ?
                     text.substring(0, text.length() - 1) + "\u00ad-" : text;
             drawKernedString(runs, x, y, info);
@@ -502,11 +511,11 @@ public class PdfBoxFastOutputDevice extends AbstractOutputDevice implements Outp
      * A left-to-right run, drawn in the runs {@link PdfBoxTextRenderer#kernedRuns}
      * measured it with.
      */
-    private void drawKernedString(String s, float x, float y, JustificationInfo info, PDFontStringWidthInterface stringWidthInterface) throws IOException {
+    private void drawKernedString(String s, float x, float y, JustificationInfo info) {
         float xOffset = 0f;
         for (FontRun run : PdfBoxTextRenderer.kernedRuns(_font, s, _reorderer)) {
             drawStringFast(run.string, x + xOffset, y, info, run.description, _font.getSize2D(), run.kerning);
-            xOffset += (stringWidthInterface.getFontStringWidth(run.description.getFont(), run.string) / 1000f) * _font.getSize2D();
+            xOffset += (run.width() / 1000f) * _font.getSize2D();
             if (info != null) {
                 xOffset += (run.spaceCharacterCount * info.getSpaceAdjust()) +
                            (run.otherCharacterCount * info.getNonSpaceAdjust());

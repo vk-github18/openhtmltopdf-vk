@@ -184,7 +184,7 @@ public class PdfBoxRenderer implements Closeable, PageSupplier {
             _outputDevice =
                     new PdfBoxFastOutputDevice(DEFAULT_DOTS_PER_POINT, _testMode,
                             state._pdfUaConform || state._pdfAConformance.getConformanceValue().equals("A"),
-                            state._pdfAConformance);
+                            state._pdfAConformance, state._glyphLayoutProcessor);
             _outputDevice.setWriter(_pdfDoc);
             _outputDevice.setStartPageNo(_pdfDoc.getNumberOfPages());
 
