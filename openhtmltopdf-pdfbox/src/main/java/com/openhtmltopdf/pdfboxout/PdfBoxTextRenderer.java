@@ -446,7 +446,7 @@ public class PdfBoxTextRenderer implements TextRenderer, PDFontStringWidthInterf
     @Override
     public int getWidth(FontContext context, FSFont font, String string, byte direction) {
         PdfBoxFSFont pdfBoxFont = (PdfBoxFSFont) font;
-        if (!pdfBoxFont.isKerning() || direction != BidiSplitter.LTR) {
+        if (_glyphLayoutProcessor == null || !pdfBoxFont.isKerning() || direction != BidiSplitter.LTR) {
             return getWidth(context, font, string);
         }
 
