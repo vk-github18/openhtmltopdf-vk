@@ -1,7 +1,10 @@
 package com.openhtmltopdf.pdfbox.glyphlayout.awt;
 
+import org.apache.fontbox.ttf.TTFParser;
 import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutFontLoaderAwt;
 import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
+import org.apache.pdfbox.io.RandomAccessRead;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.AbstractGlyphLayoutProcessor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
@@ -18,6 +21,9 @@ import java.io.InputStream;
  */
 public class PdfBoxGlyphLayoutProcessorAwt extends GlyphLayoutProcessorAwt {
 
+    private final PdfBoxGlyphLayoutFontLoaderAwt glyphLayoutFontLoaderAwt = new PdfBoxGlyphLayoutFontLoaderAwt();
+
+
     public PdfBoxGlyphLayoutProcessorAwt(AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options) {
         super(options);
     }
@@ -25,10 +31,18 @@ public class PdfBoxGlyphLayoutProcessorAwt extends GlyphLayoutProcessorAwt {
     public PdfBoxGlyphLayoutProcessorAwt() {
     }
 
+// No constructor where I could set PdfBoxGlyphLayoutFontLoaderAwt in GlyphLayoutProcessorAwt
+// No useful public or protected constructor in PFType0Font
+    ///////////////////////77
+/// 1. Font nicht richtig erzeugt
+/// 2. supportsFont und die anderen Methoden werden nicht funktionieren
+///////////////////////77
+
+
 
     @Override
     public PDType0Font loadFont(PDDocument pdDocument, InputStream inputStream) throws IOException, FontFormatException {
-        return wrapFont(super.loadFont(pdDocument, inputStream));
+        return glyphLayoutFontLoaderAwt.loadFont(pdDocument, inputStream);
     }
 
     @Override
@@ -46,7 +60,4 @@ public class PdfBoxGlyphLayoutProcessorAwt extends GlyphLayoutProcessorAwt {
         return wrapFont(super.loadFont(pdDocument, inputStream, embedSubset, fontOptions));
     }
 
-    protected PdfBoxGlyphLayoutType0Font wrapFont(PDType0Font type0Font) throws IOException {
-        return new PdfBoxGlyphLayoutType0Font(type0Font, this);
-    }
 }

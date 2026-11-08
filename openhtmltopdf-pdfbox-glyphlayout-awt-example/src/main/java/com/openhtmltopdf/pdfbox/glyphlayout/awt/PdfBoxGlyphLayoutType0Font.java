@@ -1,16 +1,21 @@
 package com.openhtmltopdf.pdfbox.glyphlayout.awt;
 
+import org.apache.fontbox.ttf.TTFParser;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 
 public class PdfBoxGlyphLayoutType0Font extends PDType0Font {
     private final GlyphLayoutProcessorInterface glyphLayoutProcessor;
 
-    public PdfBoxGlyphLayoutType0Font(PDType0Font type0Font, GlyphLayoutProcessorInterface glyphLayoutProcessor) throws IOException {
-        super(type0Font.getCOSObject());
+    public PdfBoxGlyphLayoutType0Font(GlyphLayoutProcessorInterface glyphLayoutProcessor, PDDocument doc, InputStream input, boolean embedSubset) throws IOException {
+       // Constructor is private
+        super(doc, (new TTFParser()).parse(RandomAccessReadBuffer.createBufferFromStream(input)), embedSubset, true, false);
         Objects.requireNonNull(glyphLayoutProcessor, "LayoutProcessor has to be not null");
         this.glyphLayoutProcessor = glyphLayoutProcessor;
     }
