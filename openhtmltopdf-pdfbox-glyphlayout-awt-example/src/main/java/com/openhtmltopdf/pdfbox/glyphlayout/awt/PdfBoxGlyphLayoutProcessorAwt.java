@@ -46,7 +46,7 @@ public class PdfBoxGlyphLayoutProcessorAwt extends GlyphLayoutProcessorAwt {
         return wrapFont(super.loadFont(pdDocument, inputStream, embedSubset, fontOptions));
     }
 
-    protected PdfBoxGlyphLayoutType1Font wrapFont(PDType0Font type0Font) throws IOException {
-        return new PdfBoxGlyphLayoutType1Font(type0Font, this);
+    protected PdfBoxGlyphLayoutType0Font wrapFont(PDType0Font type0Font) throws IOException {
+        return new PdfBoxGlyphLayoutType0Font(type0Font, this);
     }
 }

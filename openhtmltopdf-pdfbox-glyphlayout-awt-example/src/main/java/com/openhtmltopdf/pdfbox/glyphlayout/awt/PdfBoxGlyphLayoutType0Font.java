@@ -6,10 +6,10 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import java.io.IOException;
 import java.util.Objects;
 
-public class PdfBoxGlyphLayoutType1Font extends PDType0Font {
+public class PdfBoxGlyphLayoutType0Font extends PDType0Font {
     private final GlyphLayoutProcessorInterface glyphLayoutProcessor;
 
-    public PdfBoxGlyphLayoutType1Font(PDType0Font type0Font, GlyphLayoutProcessorInterface glyphLayoutProcessor) throws IOException {
+    public PdfBoxGlyphLayoutType0Font(PDType0Font type0Font, GlyphLayoutProcessorInterface glyphLayoutProcessor) throws IOException {
         super(type0Font.getCOSObject());
         Objects.requireNonNull(glyphLayoutProcessor, "LayoutProcessor has to be not null");
         this.glyphLayoutProcessor = glyphLayoutProcessor;
