@@ -32,7 +32,6 @@ import com.openhtmltopdf.util.LogMessageId;
 import com.openhtmltopdf.util.OpenUtil;
 import com.openhtmltopdf.util.ThreadCtx;
 import com.openhtmltopdf.util.XRLog;
-import org.apache.pdfbox.pdmodel.GlyphLayoutProcessorInterface;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
@@ -53,8 +52,6 @@ public class PdfBoxTextRenderer implements TextRenderer {
 
     private BidiReorderer _reorderer;
 
-    private GlyphLayoutProcessorInterface _glyphLayoutProcessor;
-
     // These will mean only first missing font/metrics
     // is logged but they should have already got a loading warning.
     // Quiet the font is missing log message.
@@ -65,11 +62,6 @@ public class PdfBoxTextRenderer implements TextRenderer {
 
     public void setup(FontContext context, BidiReorderer reorderer) {
         this._reorderer = reorderer;
-    }
-
-    // Set a glyph layout processor
-    public void setGlyphLayoutProcessor(GlyphLayoutProcessorInterface glyphLayoutProcessor) {
-        this._glyphLayoutProcessor = glyphLayoutProcessor;
     }
 
     @Override
@@ -368,28 +360,13 @@ public class PdfBoxTextRenderer implements TextRenderer {
 
         for (FontRun run : runs) {
             try {
-                strWidth += getFontStringWidth(run.description.getFont(), run.string);
+                strWidth += run.description.getFont().getStringWidth(run.string);
             } catch (Exception e) {
                 XRLog.log(Level.WARNING, LogMessageId.LogMessageId0Param.RENDER_BUG_FONT_DIDNT_CONTAIN_EXPECTED_CHARACTER, e);
             }
         }
 
         return strWidth;
-    }
-
-    /*
-     * Compute string width for given font with default algorithm or GlyphLayoutProcessor
-     */
-    private float getFontStringWidth(PDFont font, String text) throws IOException {
-        float result;
-        if (_glyphLayoutProcessor != null
-                && font instanceof PDType0Font
-                && _glyphLayoutProcessor.supportsFont(font)) {
-            result = _glyphLayoutProcessor.getStringWidth((PDType0Font) font, 1f, text) * 1000f;
-        } else {
-            result = font.getStringWidth(text);
-        }
-        return result;
     }
 
     @Override
@@ -409,7 +386,7 @@ public class PdfBoxTextRenderer implements TextRenderer {
 
         float result = 0f;
         try {
-            result = getFontStringWidth(description.get().getFont(), effectiveString) / 1000f * pdfBoxFont.getSize2D();
+            result = description.get().getFont().getStringWidth(effectiveString) / 1000f * pdfBoxFont.getSize2D();
         } catch (IllegalArgumentException e) {
             /* PDFont::getStringWidth throws an IllegalArgumentException if the character doesn't exist in the font.
                We can do it one character by character instead, but first let's partition the string logarithmically
@@ -621,4 +598,5 @@ public class PdfBoxTextRenderer implements TextRenderer {
         XRLog.log(Level.WARNING, LogMessageId.LogMessageId1Param.RENDER_FONT_IS_NULL, fontDescription);
         _loggedMissingFont = true;
     }
+
 }

@@ -435,9 +435,7 @@ public class PdfBoxRenderer implements Closeable, PageSupplier {
 
         result.setDefaultTextDirection(_defaultTextDirection);
 
-        PdfBoxTextRenderer pdfBoxTextRenderer = ((PdfBoxTextRenderer) _sharedContext.getTextRenderer());
-        pdfBoxTextRenderer.setup(result.getFontContext(), _reorderer != null ? _reorderer : new SimpleBidiReorderer());
-        pdfBoxTextRenderer.setGlyphLayoutProcessor(_glyphLayoutProcessor);
+        ((PdfBoxTextRenderer) _sharedContext.getTextRenderer()).setup(result.getFontContext(), _reorderer != null ? _reorderer : new SimpleBidiReorderer());
 
         return result;
     }
