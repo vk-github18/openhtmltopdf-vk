@@ -1,8 +1,8 @@
-package com.openhtmltopdf.pdfbox.glyphlayout.awt;
+package com.openhtmltopdf.pdfbox.glyphlayout.awt.example;
 
+import com.openhtmltopdf.pdfbox.glyphlayout.awt.PdfBoxGlyphLayoutProcessorAwt;
 import com.openhtmltopdf.pdfboxout.PDFontSupplier;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
-import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
 import org.apache.pdfbox.pdmodel.AbstractGlyphLayoutProcessor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
@@ -44,7 +44,7 @@ public class PdfBoxGlyphLayoutExampleDin91379 {
              OutputStream outputStream = Files.newOutputStream(out)) {
             AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options = new AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions();
             options.useActualText();
-            GlyphLayoutProcessorAwt glyphLayoutProcessor = new GlyphLayoutProcessorAwt(options);
+            PdfBoxGlyphLayoutProcessorAwt glyphLayoutProcessor = new PdfBoxGlyphLayoutProcessorAwt(options);
 
             PDFont arimo = glyphLayoutProcessor.loadFont(doc, this.getClass().getResourceAsStream("/fonts/arimo/Arimo-Regular.ttf"));
 

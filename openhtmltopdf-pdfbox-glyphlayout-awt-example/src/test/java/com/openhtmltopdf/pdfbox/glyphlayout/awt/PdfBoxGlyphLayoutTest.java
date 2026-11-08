@@ -3,6 +3,7 @@ package com.openhtmltopdf.pdfbox.glyphlayout.awt;
 import com.openhtmltopdf.css.constants.IdentValue;
 import com.openhtmltopdf.extend.FontContext;
 import com.openhtmltopdf.extend.impl.FSNoOpCacheStore;
+import com.openhtmltopdf.pdfbox.glyphlayout.awt.example.PdfBoxGlyphLayoutExampleBidi;
 import com.openhtmltopdf.pdfboxout.PDFontSupplier;
 import com.openhtmltopdf.pdfboxout.PdfBoxFSFont;
 import com.openhtmltopdf.pdfboxout.PdfBoxFontResolver;

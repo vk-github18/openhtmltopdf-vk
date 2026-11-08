@@ -164,7 +164,7 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>com.openhtmltopdf.pdfbox.glyphlayout.awt.PdfBoxGlyphLayoutExampleDin91379</mainClass>
+                            <mainClass>com.openhtmltopdf.pdfbox.glyphlayout.awt.example.PdfBoxGlyphLayoutExampleDin91379</mainClass>
                             <classpathScope>runtime</classpathScope>
                         </configuration>
                     </execution>
