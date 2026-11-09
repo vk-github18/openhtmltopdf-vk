@@ -7,15 +7,13 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Objects;
 
 public class PdfBoxGlyphLayoutType0Font extends PDType0Font {
     private final GlyphLayoutProcessorInterface glyphLayoutProcessor;
 
-    public PdfBoxGlyphLayoutType0Font(GlyphLayoutProcessorInterface glyphLayoutProcessor, PDDocument doc, InputStream input, boolean embedSubset) throws IOException {
-       // Constructor is private
-        super(doc, (new TTFParser()).parse(RandomAccessReadBuffer.createBufferFromStream(input)), embedSubset, true, false);
+    public PdfBoxGlyphLayoutType0Font(GlyphLayoutProcessorInterface glyphLayoutProcessor, PDDocument doc, byte[] fontBytes, boolean embedSubset, boolean vertical) throws IOException {
+        super(doc, (new TTFParser()).parse(new RandomAccessReadBuffer(fontBytes)), embedSubset, true, vertical);
         Objects.requireNonNull(glyphLayoutProcessor, "LayoutProcessor has to be not null");
         this.glyphLayoutProcessor = glyphLayoutProcessor;
     }
