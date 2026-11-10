@@ -7,7 +7,10 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import java.io.IOException;
 
 /**
- *
+ * Font loader for PdfBoxGlyphLayoutProcessorAwt.
+ * <p>
+ * Returns instances of PdfBoxGlyphLayoutType0Font for correct
+ * computation of getStringWidth().
  */
 public class PdfBoxGlyphLayoutFontLoaderAwt extends GlyphLayoutFontLoaderAwt {
 
@@ -28,11 +31,11 @@ public class PdfBoxGlyphLayoutFontLoaderAwt extends GlyphLayoutFontLoaderAwt {
      */
     @Override
     protected PDType0Font loadPDType0Font(PDDocument pdDocument, byte[] fontBytes,
-                                          boolean embedSubset, boolean vertical)
+                                          boolean embedSubset)
             throws IOException {
 
         return new PdfBoxGlyphLayoutType0Font(glyphLayoutProcessor, pdDocument, fontBytes,
-                embedSubset, vertical);
+                embedSubset, false);
     }
 
 }

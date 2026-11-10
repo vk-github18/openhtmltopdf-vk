@@ -9,6 +9,9 @@ import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * Font with correct computation of getStringWith with PdfBoxGlyphLayoutProcessor
+ */
 public class PdfBoxGlyphLayoutType0Font extends PDType0Font {
     private final GlyphLayoutProcessorInterface glyphLayoutProcessor;
 
