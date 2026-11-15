@@ -9,7 +9,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>openhtmltopdf-pdfbox-glyphlayout-awt-example</artifactId>
+    <artifactId>openhtmltopdf-pdfbox-glyphlayout-awt</artifactId>
 
     <packaging>jar</packaging>
 
@@ -164,7 +164,7 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>com.openhtmltopdf.pdfbox.glyphlayout.awt.example.PdfBoxGlyphLayoutExampleDin91379</mainClass>
+                            <mainClass>com.openhtmltopdf.pdfbox.glyphlayout.example.example.PdfBoxGlyphLayoutExampleDin91379</mainClass>
                             <classpathScope>runtime</classpathScope>
                         </configuration>
                     </execution>
