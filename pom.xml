@@ -158,9 +158,9 @@
     </profile>
 
     <profile>
-        <id>glyphlayout-example</id>
+        <id>glyphlayout-awt</id>
         <modules>
-          <module>openhtmltopdf-pdfbox-glyphlayout-awt-example</module>
+          <module>openhtmltopdf-pdfbox-glyphlayout-awt</module>
         </modules>
       </profile>
   </profiles>
