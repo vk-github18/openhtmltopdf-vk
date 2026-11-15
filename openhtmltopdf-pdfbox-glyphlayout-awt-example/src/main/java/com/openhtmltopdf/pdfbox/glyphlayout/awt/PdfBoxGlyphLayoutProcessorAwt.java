@@ -2,7 +2,6 @@ package com.openhtmltopdf.pdfbox.glyphlayout.awt;
 
 import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutFontLoaderAwt;
 import org.apache.pdfbox.glyphlayout.awt.GlyphLayoutProcessorAwt;
-import org.apache.pdfbox.pdmodel.AbstractGlyphLayoutProcessor;
 
 /**
  * Glyph layout processor
@@ -13,7 +12,7 @@ import org.apache.pdfbox.pdmodel.AbstractGlyphLayoutProcessor;
 public class PdfBoxGlyphLayoutProcessorAwt extends GlyphLayoutProcessorAwt {
 
 
-    public PdfBoxGlyphLayoutProcessorAwt(AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options) {
+    public PdfBoxGlyphLayoutProcessorAwt(PdfBoxGlyphLayoutProcessorAwt.GlyphLayoutProcessorOptions options) {
         super(options);
     }
 

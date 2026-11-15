@@ -3,7 +3,6 @@ package com.openhtmltopdf.pdfbox.glyphlayout.awt.example;
 import com.openhtmltopdf.pdfbox.glyphlayout.awt.PdfBoxGlyphLayoutProcessorAwt;
 import com.openhtmltopdf.pdfboxout.PDFontSupplier;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
-import org.apache.pdfbox.pdmodel.AbstractGlyphLayoutProcessor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
@@ -43,7 +42,7 @@ public class PdfBoxGlyphLayoutExampleBidi {
 
         try (PDDocument doc = new PDDocument();
              OutputStream outputStream = Files.newOutputStream(out)) {
-            AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions options = new AbstractGlyphLayoutProcessor.GlyphLayoutProcessorOptions();
+            PdfBoxGlyphLayoutProcessorAwt.GlyphLayoutProcessorOptions options = new PdfBoxGlyphLayoutProcessorAwt.GlyphLayoutProcessorOptions();
             options.useActualText();
             PdfBoxGlyphLayoutProcessorAwt glyphLayoutProcessor = new PdfBoxGlyphLayoutProcessorAwt(options);
 
